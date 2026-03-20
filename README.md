@@ -164,7 +164,7 @@ Connect to `wss://api.trackkit.dev/ws/track/:trackingCode` to receive real-time 
 For production, self-host the routing infrastructure to avoid rate limits on public OSM endpoints:
 
 ```bash
-git clone https://github.com/yourusername/trackkit
+git clone https://github.com/hholaitan01/trackkit
 cd trackkit
 cp apps/api/.env.example apps/api/.env
 # Edit .env with your database URL
