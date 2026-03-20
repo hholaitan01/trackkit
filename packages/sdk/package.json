@@ -1,0 +1,17 @@
+{
+  "name": "@trackkit/sdk",
+  "version": "0.1.0",
+  "description": "TrackKit SDK - Real-time delivery tracking API client",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  },
+  "files": ["dist", "src"],
+  "keywords": ["delivery", "tracking", "maps", "realtime", "logistics", "africa"]
+}

@@ -1,0 +1,93 @@
+# ─── TrackKit Self-Hosted Infrastructure ───
+# Run: docker compose up -d
+# This gives you zero dependency on public OSM endpoints.
+
+version: "3.8"
+
+services:
+  # ─── PostgreSQL ───
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: trackkit
+      POSTGRES_USER: trackkit
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-trackkit_dev_pw}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U trackkit"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ─── Valhalla (Routing Engine) ───
+  # Downloads and processes OSM data for the region you specify.
+  # First startup takes 10-30 min depending on region size.
+  valhalla:
+    image: ghcr.io/gis-ops/docker-valhalla/valhalla:latest
+    environment:
+      # Nigeria extract — change for your target region
+      # Full list: https://download.geofabrik.de/
+      tile_urls: "https://download.geofabrik.de/africa/nigeria-latest.osm.pbf"
+      use_tiles_ignore_pbf: "False"
+      build_elevation: "False"
+      build_admins: "True"
+      build_time_zones: "True"
+      force_rebuild: "False"
+    ports:
+      - "8002:8002"
+    volumes:
+      - valhalla_data:/custom_files
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+
+  # ─── Nominatim (Geocoding) ───
+  # Also downloads OSM data. First startup takes 15-60 min.
+  nominatim:
+    image: mediagis/nominatim:4.4
+    environment:
+      PBF_URL: "https://download.geofabrik.de/africa/nigeria-latest.osm.pbf"
+      REPLICATION_URL: "https://download.geofabrik.de/africa/nigeria-updates/"
+      NOMINATIM_PASSWORD: ${NOMINATIM_PASSWORD:-nominatim_dev}
+      IMPORT_STYLE: full
+    ports:
+      - "8080:8080"
+    volumes:
+      - nominatim_data:/var/lib/postgresql/14/main
+      - nominatim_flatnode:/nominatim/flatnode
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+    shm_size: 1g
+
+  # ─── TrackKit API ───
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: "postgresql://trackkit:${DB_PASSWORD:-trackkit_dev_pw}@postgres:5432/trackkit"
+      VALHALLA_URL: "http://valhalla:8002"
+      NOMINATIM_URL: "http://nominatim:8080"
+      PORT: "3001"
+      NODE_ENV: production
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      valhalla:
+        condition: service_started
+      nominatim:
+        condition: service_started
+
+volumes:
+  pgdata:
+  valhalla_data:
+  nominatim_data:
+  nominatim_flatnode:

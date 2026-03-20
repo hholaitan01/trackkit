@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Multi-tenant: each business is a tenant ───
+model Tenant {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique  // subdomain / white-label
+  domain      String?           // custom domain
+  logoUrl     String?
+  brandColor  String   @default("#38bdf8")
+  
+  apiKeys     ApiKey[]
+  drivers     Driver[]
+  deliveries  Delivery[]
+  webhooks    Webhook[]
+  
+  plan        Plan     @default(FREE)
+  deliveryCount Int    @default(0) // current month
+  deliveryLimit Int    @default(500)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum Plan {
+  FREE
+  GROWTH
+  SCALE
+  MANAGED
+}
+
+model ApiKey {
+  id        String   @id @default(cuid())
+  key       String   @unique  // tk_live_xxx or tk_test_xxx
+  name      String   @default("Default")
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  isLive    Boolean  @default(false)
+  lastUsed  DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([key])
+}
+
+model Driver {
+  id         String   @id @default(cuid())
+  externalId String?  // tenant's own driver ID
+  name       String
+  phone      String?
+  tenantId   String
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  // Latest known location
+  lat        Float?
+  lng        Float?
+  heading    Float?
+  speed      Float?
+  locationAt DateTime?
+  
+  isOnline   Boolean  @default(false)
+  deliveries Delivery[]
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([tenantId, externalId])
+  @@index([tenantId, isOnline])
+}
+
+model Delivery {
+  id           String   @id @default(cuid())
+  trackingCode String   @unique  // short code: TK-XXXX
+  externalId   String?  // tenant's own order ID
+  
+  tenantId     String
+  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  driverId     String?
+  driver       Driver?  @relation(fields: [driverId], references: [id])
+  
+  status       DeliveryStatus @default(PENDING)
+  
+  // Pickup
+  pickupAddress   String
+  pickupLat       Float
+  pickupLng       Float
+  
+  // Dropoff
+  dropoffAddress  String
+  dropoffLat      Float
+  dropoffLng      Float
+  
+  // Current route info (recalculated on driver location update)
+  currentEtaMinutes  Int?
+  currentDistanceKm  Float?
+  routePolyline      String?  // encoded polyline
+  
+  // Timestamps
+  confirmedAt   DateTime?
+  pickedUpAt    DateTime?
+  deliveredAt   DateTime?
+  cancelledAt   DateTime?
+  
+  metadata      Json?   // tenant can store arbitrary data
+  
+  // Location history (latest N for the tracking widget)
+  locationHistory Json?  // [{lat, lng, ts}]
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([tenantId, status])
+  @@index([trackingCode])
+  @@index([tenantId, externalId])
+}
+
+enum DeliveryStatus {
+  PENDING
+  CONFIRMED
+  DRIVER_ASSIGNED
+  PICKUP_EN_ROUTE
+  PICKED_UP
+  DELIVERING
+  ARRIVING
+  DELIVERED
+  CANCELLED
+}
+
+model Webhook {
+  id        String   @id @default(cuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  url       String
+  secret    String   // for HMAC signing
+  events    String[] // ["delivery.status_changed", "delivery.location_updated"]
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([tenantId, isActive])
+}
