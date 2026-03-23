@@ -2,7 +2,7 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { db } from "../lib/db";
 
 // Routes that don't require auth
-const PUBLIC_PATHS = ["/health", "/track", "/ws"];
+const PUBLIC_PATHS = ["/health", "/track", "/ws", "/v1/auth"];
 
 export async function authMiddleware(request: FastifyRequest, reply: FastifyReply) {
   // Skip auth for public routes

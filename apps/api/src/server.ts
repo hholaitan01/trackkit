@@ -7,6 +7,7 @@ import { driverRoutes } from "./routes/drivers";
 import { tenantRoutes } from "./routes/tenants";
 import { trackingRoutes } from "./routes/tracking";
 import { webhookRoutes } from "./routes/webhooks";
+import { authRoutes } from "./routes/auth";
 import { wsHandler } from "./ws/handler";
 import { authMiddleware } from "./middleware/auth";
 import { config } from "./lib/config";
@@ -41,7 +42,8 @@ async function bootstrap() {
   app.register(tenantRoutes, { prefix: "/v1/tenants" });
   app.register(webhookRoutes, { prefix: "/v1/webhooks" });
 
-  // ─── Public tracking (no auth) ───
+  // ─── Public routes (no auth) ───
+  app.register(authRoutes, { prefix: "/v1/auth" });
   app.register(trackingRoutes, { prefix: "/track" });
 
   // ─── WebSocket for real-time location streaming ───
