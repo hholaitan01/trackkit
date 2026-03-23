@@ -569,21 +569,26 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
           </span>
         </div>
         <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
-          {["Features", "Pricing", "Docs"].map(l => (
-            <a key={l} href="#" style={{
+          {[
+            { label: "Features", href: "#features" },
+            { label: "Pricing", href: "#pricing" },
+            { label: "Docs", href: "https://github.com/hholaitan01/trackkit/blob/main/docs/quickstart.md" },
+          ].map(l => (
+            <a key={l.label} href={l.href} style={{
               fontSize: 13, color: "rgba(148, 163, 184, 0.6)", textDecoration: "none",
               fontWeight: 500, transition: "color 0.2s",
             }}
               onMouseEnter={e => e.target.style.color = "#f0f9ff"}
               onMouseLeave={e => e.target.style.color = "rgba(148, 163, 184, 0.6)"}
-            >{l}</a>
+            >{l.label}</a>
           ))}
-          <button style={{
+          <a href="https://github.com/hholaitan01/trackkit" target="_blank" rel="noopener noreferrer" style={{
             padding: "8px 18px", borderRadius: 8,
             background: "linear-gradient(135deg, #38bdf8, #0ea5e9)",
             border: "none", color: "#060a14",
             fontSize: 12, fontWeight: 700, cursor: "pointer",
-          }}>Get API Key</button>
+            textDecoration: "none",
+          }}>GitHub</a>
         </div>
       </nav>
 
@@ -640,24 +645,26 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
           </p>
 
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-            <button style={{
+            <a href="https://github.com/hholaitan01/trackkit" target="_blank" rel="noopener noreferrer" style={{
               padding: "14px 28px", borderRadius: 10,
               background: "linear-gradient(135deg, #38bdf8, #0ea5e9)",
               border: "none", color: "#060a14",
               fontSize: 14, fontWeight: 700, cursor: "pointer",
               boxShadow: "0 0 30px rgba(56, 189, 248, 0.2)",
+              textDecoration: "none",
             }}>
               Start Free →
-            </button>
-            <button style={{
+            </a>
+            <a href="https://github.com/hholaitan01/trackkit/blob/main/docs/quickstart.md" target="_blank" rel="noopener noreferrer" style={{
               padding: "14px 28px", borderRadius: 10,
               background: "transparent",
               border: "1px solid rgba(56, 189, 248, 0.2)",
               color: "#38bdf8",
               fontSize: 14, fontWeight: 600, cursor: "pointer",
+              textDecoration: "none",
             }}>
               View Docs
-            </button>
+            </a>
           </div>
 
           <div style={{
@@ -741,7 +748,7 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
       </section>
 
       {/* Features */}
-      <section style={{ padding: "40px 24px 80px", maxWidth: 1100, margin: "0 auto" }}>
+      <section id="features" style={{ padding: "40px 24px 80px", maxWidth: 1100, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 48 }}>
           <h2 style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-0.03em", margin: "0 0 12px" }}>
             Everything you need. Nothing you don't.
@@ -798,7 +805,7 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
       </section>
 
       {/* Pricing */}
-      <section style={{ padding: "80px 24px", maxWidth: 1000, margin: "0 auto" }}>
+      <section id="pricing" style={{ padding: "80px 24px", maxWidth: 1000, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 48 }}>
           <h2 style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-0.03em", margin: "0 0 12px" }}>
             Simple, predictable pricing
@@ -859,15 +866,17 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
         }}>
           500 free deliveries. No credit card required.
         </p>
-        <button style={{
+        <a href="https://github.com/hholaitan01/trackkit" target="_blank" rel="noopener noreferrer" style={{
+          display: "inline-block",
           padding: "16px 40px", borderRadius: 12,
           background: "linear-gradient(135deg, #38bdf8, #0ea5e9)",
           border: "none", color: "#060a14",
           fontSize: 16, fontWeight: 800, cursor: "pointer",
           boxShadow: "0 0 40px rgba(56, 189, 248, 0.25)",
+          textDecoration: "none",
         }}>
-          Get Your API Key →
-        </button>
+          Get Started on GitHub →
+        </a>
       </section>
 
       {/* Footer */}

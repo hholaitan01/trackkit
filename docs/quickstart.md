@@ -5,10 +5,10 @@
 All API requests require a Bearer token:
 
 ```
-Authorization: Bearer tk_live_abc123
+Authorization: Bearer tk_test_demo_abc123xyz
 ```
 
-Get your API key from the [dashboard](https://app.trackkit.dev).
+Get your API key from the seed data or create one via the API.
 
 Test keys (`tk_test_*`) work in sandbox mode. Live keys (`tk_live_*`) create real deliveries.
 
@@ -20,10 +20,10 @@ Here's how Chowdeck (or any delivery app) would integrate TrackKit:
 
 ```typescript
 // In your order service
-const response = await fetch('https://api.trackkit.dev/v1/deliveries', {
+const response = await fetch('https://trackkitapi-production.up.railway.app/v1/deliveries', {
   method: 'POST',
   headers: {
-    'Authorization': 'Bearer tk_live_abc123',
+    'Authorization': 'Bearer tk_test_demo_abc123xyz',
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
@@ -42,7 +42,7 @@ const delivery = await response.json()
 // {
 //   id: "clx7abc123...",
 //   trackingCode: "TK-J8K2M1",
-//   trackingUrl: "https://yourapp.trackkit.dev/track/TK-J8K2M1",
+//   trackingUrl: "https://trackkitapi-production.up.railway.app/track/TK-J8K2M1",
 //   status: "PENDING",
 //   eta: { minutes: 25, distanceKm: 8.2 },
 //   ...
@@ -56,10 +56,10 @@ sendSMS(customer.phone, `Track your order: ${delivery.trackingUrl}`)
 
 ```typescript
 // When a driver accepts the order
-await fetch(`https://api.trackkit.dev/v1/deliveries/${delivery.id}/assign`, {
+await fetch(`https://trackkitapi-production.up.railway.app/v1/deliveries/${delivery.id}/assign`, {
   method: 'POST',
   headers: {
-    'Authorization': 'Bearer tk_live_abc123',
+    'Authorization': 'Bearer tk_test_demo_abc123xyz',
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({ driverId: 'driver_456' })
@@ -71,10 +71,10 @@ await fetch(`https://api.trackkit.dev/v1/deliveries/${delivery.id}/assign`, {
 ```typescript
 // In your driver app — call every 5-10 seconds
 navigator.geolocation.watchPosition(async (pos) => {
-  await fetch(`https://api.trackkit.dev/v1/deliveries/${deliveryId}/location`, {
+  await fetch(`https://trackkitapi-production.up.railway.app/v1/deliveries/${deliveryId}/location`, {
     method: 'POST',
     headers: {
-      'Authorization': 'Bearer tk_live_abc123',
+      'Authorization': 'Bearer tk_test_demo_abc123xyz',
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
@@ -101,10 +101,10 @@ No code needed on the customer side — it just works.
 
 ```typescript
 // Register a webhook
-await fetch('https://api.trackkit.dev/v1/webhooks', {
+await fetch('https://trackkitapi-production.up.railway.app/v1/webhooks', {
   method: 'POST',
   headers: {
-    'Authorization': 'Bearer tk_live_abc123',
+    'Authorization': 'Bearer tk_test_demo_abc123xyz',
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
