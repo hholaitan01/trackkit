@@ -1,4 +1,4 @@
-import Fastify from "fastify";
+import Fastify, { FastifyRequest } from "fastify";
 import fastifyWebsocket from "@fastify/websocket";
 import fastifyCors from "@fastify/cors";
 import fastifyRateLimit from "@fastify/rate-limit";
@@ -27,8 +27,18 @@ async function bootstrap() {
   });
 
   await app.register(fastifyRateLimit, {
-    max: 100,
+    max: (request: FastifyRequest, _key: string) => {
+      const tenant = (request as any).tenant;
+      if (!tenant) return 100; // Default for public routes
+      const plan = tenant.plan as keyof typeof config.planLimits;
+      return config.planLimits[plan]?.apiCallsPerMinute ?? 100;
+    },
     timeWindow: "1 minute",
+    keyGenerator: (request: FastifyRequest) => {
+      // Rate limit per tenant (API key), not per IP
+      const tenant = (request as any).tenant;
+      return tenant?.id || request.ip;
+    },
   });
 
   await app.register(fastifyWebsocket);

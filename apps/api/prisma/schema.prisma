@@ -24,7 +24,8 @@ model Tenant {
   plan        Plan     @default(FREE)
   deliveryCount Int    @default(0) // current month
   deliveryLimit Int    @default(500)
-  
+  countResetAt  DateTime @default(now()) // last monthly reset
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

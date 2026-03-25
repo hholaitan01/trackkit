@@ -12,9 +12,9 @@ export const config = {
   
   // Limits per plan
   planLimits: {
-    FREE: { deliveriesPerMonth: 500, webhooks: 1 },
-    GROWTH: { deliveriesPerMonth: 5000, webhooks: 5 },
-    SCALE: { deliveriesPerMonth: 50000, webhooks: 20 },
-    MANAGED: { deliveriesPerMonth: Infinity, webhooks: 100 },
+    FREE: { deliveriesPerMonth: 500, webhooks: 1, apiCallsPerMinute: 100 },
+    GROWTH: { deliveriesPerMonth: 5000, webhooks: 5, apiCallsPerMinute: 500 },
+    SCALE: { deliveriesPerMonth: 50000, webhooks: 20, apiCallsPerMinute: 2000 },
+    MANAGED: { deliveriesPerMonth: Infinity, webhooks: 100, apiCallsPerMinute: 10000 },
   },
 } as const;

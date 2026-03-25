@@ -15,6 +15,17 @@ export async function deliveryRoutes(app: FastifyInstance) {
     const tenant = (request as any).tenant;
     const body = request.body as any;
 
+    // Auto-reset delivery count if a new month has started
+    const now = new Date();
+    const resetAt = new Date(tenant.countResetAt);
+    if (now.getMonth() !== resetAt.getMonth() || now.getFullYear() !== resetAt.getFullYear()) {
+      await db.tenant.update({
+        where: { id: tenant.id },
+        data: { deliveryCount: 0, countResetAt: now },
+      });
+      tenant.deliveryCount = 0;
+    }
+
     // Check plan limits
     if (tenant.deliveryCount >= tenant.deliveryLimit) {
       return reply.status(429).send({

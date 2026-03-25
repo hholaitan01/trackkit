@@ -1,12 +1,24 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { db } from "../lib/db";
 import { randomBytes } from "crypto";
+import { config } from "../lib/config";
 
 export async function webhookRoutes(app: FastifyInstance) {
   // Create webhook
   app.post("/", async (request: FastifyRequest, reply: FastifyReply) => {
     const tenant = (request as any).tenant;
     const body = request.body as any;
+
+    // Check webhook limit for plan
+    const planLimit = config.planLimits[tenant.plan as keyof typeof config.planLimits];
+    const webhookCount = await db.webhook.count({ where: { tenantId: tenant.id } });
+
+    if (webhookCount >= planLimit.webhooks) {
+      return reply.status(429).send({
+        error: "limit_exceeded",
+        message: `Webhook limit reached (${planLimit.webhooks} for ${tenant.plan} plan). Upgrade to add more.`,
+      });
+    }
 
     const webhook = await db.webhook.create({
       data: {

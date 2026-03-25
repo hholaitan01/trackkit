@@ -1,17 +1,50 @@
 {
-  "name": "@trackkit/sdk",
+  "name": "trackkit-sdk",
   "version": "0.1.0",
-  "description": "TrackKit SDK - Real-time delivery tracking API client",
+  "description": "TrackKit SDK — Real-time delivery tracking API client for Node.js and browsers",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hholaitan01/trackkit",
+    "directory": "packages/sdk"
+  },
+  "homepage": "https://github.com/hholaitan01/trackkit#readme",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "sideEffects": false,
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch"
+    "build": "tsup",
+    "dev": "tsup --watch"
   },
   "devDependencies": {
+    "tsup": "^8.0.0",
     "typescript": "^5.4.0"
   },
-  "files": ["dist", "src"],
-  "keywords": ["delivery", "tracking", "maps", "realtime", "logistics", "africa"]
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "delivery",
+    "tracking",
+    "maps",
+    "realtime",
+    "logistics",
+    "africa",
+    "last-mile",
+    "sdk",
+    "api-client"
+  ]
 }

@@ -434,8 +434,8 @@ class TrackKit {
       throw new Error("TrackKit: apiKey is required");
     }
 
-    const baseUrl = options.baseUrl || "https://api.trackkit.dev";
-    const wsUrl = options.wsUrl || "wss://api.trackkit.dev/ws";
+    const baseUrl = options.baseUrl || "https://trackkitapi-production.up.railway.app";
+    const wsUrl = options.wsUrl || "wss://trackkitapi-production.up.railway.app/ws";
 
     const http = new HTTPClient(baseUrl, options.apiKey);
 
