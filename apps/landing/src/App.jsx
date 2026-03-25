@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import DocsPage from "./Docs";
 
 // ─── Route Path (Lagos: Yaba → Victoria Island) ───
 const ROUTE_POINTS = [
@@ -668,11 +669,26 @@ export default function TrackKitLanding() {
   const [demoPlaying, setDemoPlaying] = useState(false);
   const [activeTab, setActiveTab] = useState("widget");
   const [showSignup, setShowSignup] = useState(false);
+  const [page, setPage] = useState(window.location.pathname === "/docs" ? "docs" : "home");
+
+  const navigate = (p) => {
+    setPage(p);
+    window.history.pushState({}, "", p === "docs" ? "/docs" : "/");
+    window.scrollTo(0, 0);
+  };
+
+  useEffect(() => {
+    const onPop = () => setPage(window.location.pathname === "/docs" ? "docs" : "home");
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => setDemoPlaying(true), 1500);
     return () => clearTimeout(timer);
   }, []);
+
+  if (page === "docs") return <DocsPage onNavigate={(p) => { setPage(p); window.history.pushState({}, "", "/"); window.scrollTo(0, 0); }} />;
 
   const widgetCode = `<span style="color:#c084fc">&lt;script</span> <span style="color:#38bdf8">src</span>=<span style="color:#86efac">"https://cdn.trackkit.dev/v1/widget.js"</span><span style="color:#c084fc">&gt;&lt;/script&gt;</span>
 
@@ -766,9 +782,9 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
           {[
             { label: "Features", href: "#features" },
             { label: "Pricing", href: "#pricing" },
-            { label: "Docs", href: "https://github.com/hholaitan01/trackkit/blob/main/docs/quickstart.md" },
+            { label: "Docs", href: "/docs", internal: true },
           ].map(l => (
-            <a key={l.label} href={l.href} style={{
+            <a key={l.label} href={l.href} onClick={l.internal ? (e) => { e.preventDefault(); setPage("docs"); window.history.pushState({}, "", "/docs"); window.scrollTo(0, 0); } : undefined} style={{
               fontSize: 13, color: "rgba(148, 163, 184, 0.6)", textDecoration: "none",
               fontWeight: 500, transition: "color 0.2s",
             }}
@@ -848,16 +864,15 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
             }}>
               Start Free →
             </button>
-            <a href="https://github.com/hholaitan01/trackkit/blob/main/docs/quickstart.md" target="_blank" rel="noopener noreferrer" style={{
+            <button onClick={() => { setPage("docs"); window.history.pushState({}, "", "/docs"); window.scrollTo(0, 0); }} style={{
               padding: "14px 28px", borderRadius: 10,
               background: "transparent",
               border: "1px solid rgba(56, 189, 248, 0.2)",
               color: "#38bdf8",
               fontSize: 14, fontWeight: 600, cursor: "pointer",
-              textDecoration: "none",
             }}>
               View Docs
-            </a>
+            </button>
           </div>
 
           <div style={{
