@@ -417,7 +417,7 @@ function FeatureCard({ icon, title, desc, accent }) {
 }
 
 // ─── Pricing Card ───
-function PricingCard({ tier, price, period, features, highlight, cta }) {
+function PricingCard({ tier, price, period, features, highlight, cta, onCta }) {
   return (
     <div style={{
       background: highlight ? "linear-gradient(145deg, rgba(56, 189, 248, 0.08), rgba(12, 18, 34, 0.8))" : "rgba(12, 18, 34, 0.5)",
@@ -454,7 +454,7 @@ function PricingCard({ tier, price, period, features, highlight, cta }) {
           </div>
         ))}
       </div>
-      <button style={{
+      <button onClick={onCta} style={{
         width: "100%", padding: "12px",
         borderRadius: 10,
         border: highlight ? "none" : "1px solid rgba(56, 189, 248, 0.2)",
@@ -470,10 +470,204 @@ function PricingCard({ tier, price, period, features, highlight, cta }) {
   );
 }
 
+// ─── Signup Modal ───
+function SignupModal({ isOpen, onClose }) {
+  const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState("");
+  const [copied, setCopied] = useState("");
+
+  if (!isOpen) return null;
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    if (name.trim().length < 2) {
+      setError("Name must be at least 2 characters");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("https://trackkitapi-production.up.railway.app/v1/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: name.trim() }),
+      });
+      const data = await res.json();
+      if (data.error) {
+        setError(data.message || "Signup failed");
+      } else {
+        setResult(data);
+      }
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const copyKey = (key, label) => {
+    navigator.clipboard.writeText(key);
+    setCopied(label);
+    setTimeout(() => setCopied(""), 2000);
+  };
+
+  const handleClose = () => {
+    setName("");
+    setResult(null);
+    setError("");
+    onClose();
+  };
+
+  return (
+    <div onClick={handleClose} style={{
+      position: "fixed", inset: 0, zIndex: 1000,
+      background: "rgba(0, 0, 0, 0.7)",
+      backdropFilter: "blur(8px)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      padding: 24,
+    }}>
+      <div onClick={(e) => e.stopPropagation()} style={{
+        width: "100%", maxWidth: 440,
+        background: "linear-gradient(145deg, #0c1222, #0a0f1a)",
+        border: "1px solid rgba(56, 189, 248, 0.15)",
+        borderRadius: 20,
+        padding: "36px 32px",
+        boxShadow: "0 0 80px rgba(56, 189, 248, 0.08), 0 25px 50px rgba(0,0,0,0.5)",
+        fontFamily: "'DM Sans', sans-serif",
+      }}>
+        {!result ? (
+          <>
+            <div style={{ fontSize: 22, fontWeight: 800, color: "#f0f9ff", marginBottom: 6 }}>
+              Get your API keys
+            </div>
+            <div style={{ fontSize: 13, color: "rgba(148, 163, 184, 0.5)", marginBottom: 28 }}>
+              Create an account in seconds. No credit card required.
+            </div>
+            <form onSubmit={handleSignup}>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "rgba(148, 163, 184, 0.5)", marginBottom: 8, display: "block" }}>
+                Company / App Name
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g. Chowdeck, FastRider"
+                autoFocus
+                style={{
+                  width: "100%", padding: "14px 16px",
+                  borderRadius: 10,
+                  border: "1px solid rgba(56, 189, 248, 0.15)",
+                  background: "rgba(6, 10, 20, 0.8)",
+                  color: "#f0f9ff",
+                  fontSize: 14,
+                  outline: "none",
+                  boxSizing: "border-box",
+                  fontFamily: "'DM Sans', sans-serif",
+                }}
+              />
+              {error && (
+                <div style={{ fontSize: 12, color: "#ef4444", marginTop: 8 }}>{error}</div>
+              )}
+              <button type="submit" disabled={loading} style={{
+                width: "100%", padding: "14px",
+                borderRadius: 10, border: "none",
+                background: loading ? "rgba(56, 189, 248, 0.3)" : "linear-gradient(135deg, #38bdf8, #0ea5e9)",
+                color: "#060a14", fontSize: 14, fontWeight: 700,
+                cursor: loading ? "wait" : "pointer",
+                marginTop: 16,
+                transition: "all 0.2s ease",
+              }}>
+                {loading ? "Creating..." : "Create Free Account"}
+              </button>
+            </form>
+          </>
+        ) : (
+          <>
+            <div style={{
+              width: 48, height: 48, borderRadius: 14,
+              background: "rgba(34, 197, 94, 0.12)",
+              border: "1px solid rgba(34, 197, 94, 0.25)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 22, marginBottom: 16,
+            }}>
+              ✓
+            </div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: "#f0f9ff", marginBottom: 4 }}>
+              Welcome, {result.tenant.name}!
+            </div>
+            <div style={{ fontSize: 13, color: "rgba(148, 163, 184, 0.5)", marginBottom: 24 }}>
+              Save your API keys below — they won't be shown again.
+            </div>
+
+            {[
+              { label: "Test Key", key: result.keys.test.key, desc: "For development & testing" },
+              { label: "Live Key", key: result.keys.live.key, desc: "For production" },
+            ].map((item) => (
+              <div key={item.label} style={{
+                background: "rgba(6, 10, 20, 0.8)",
+                border: "1px solid rgba(56, 189, 248, 0.1)",
+                borderRadius: 10, padding: "12px 14px",
+                marginBottom: 10,
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: "rgba(148, 163, 184, 0.5)", letterSpacing: "0.03em" }}>
+                    {item.label}
+                  </span>
+                  <span style={{ fontSize: 10, color: "rgba(148, 163, 184, 0.3)" }}>{item.desc}</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <code style={{
+                    flex: 1, fontSize: 12, color: "#38bdf8",
+                    fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+                    wordBreak: "break-all",
+                  }}>
+                    {item.key}
+                  </code>
+                  <button onClick={() => copyKey(item.key, item.label)} style={{
+                    padding: "6px 12px", borderRadius: 6,
+                    border: "1px solid rgba(56, 189, 248, 0.2)",
+                    background: copied === item.label ? "rgba(34, 197, 94, 0.15)" : "transparent",
+                    color: copied === item.label ? "#22c55e" : "#38bdf8",
+                    fontSize: 11, fontWeight: 600, cursor: "pointer",
+                    whiteSpace: "nowrap",
+                    transition: "all 0.2s ease",
+                  }}>
+                    {copied === item.label ? "Copied!" : "Copy"}
+                  </button>
+                </div>
+              </div>
+            ))}
+
+            <a
+              href="https://github.com/hholaitan01/trackkit/blob/main/docs/quickstart.md"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "block", width: "100%", padding: "14px",
+                borderRadius: 10, border: "none",
+                background: "linear-gradient(135deg, #38bdf8, #0ea5e9)",
+                color: "#060a14", fontSize: 14, fontWeight: 700,
+                cursor: "pointer", marginTop: 16,
+                textDecoration: "none", textAlign: "center",
+                boxSizing: "border-box",
+              }}
+            >
+              Read the Quickstart Guide →
+            </a>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── Main App ───
 export default function TrackKitLanding() {
   const [demoPlaying, setDemoPlaying] = useState(false);
   const [activeTab, setActiveTab] = useState("widget");
+  const [showSignup, setShowSignup] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setDemoPlaying(true), 1500);
@@ -645,16 +839,15 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
           </p>
 
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-            <a href="https://github.com/hholaitan01/trackkit" target="_blank" rel="noopener noreferrer" style={{
+            <button onClick={() => setShowSignup(true)} style={{
               padding: "14px 28px", borderRadius: 10,
               background: "linear-gradient(135deg, #38bdf8, #0ea5e9)",
               border: "none", color: "#060a14",
               fontSize: 14, fontWeight: 700, cursor: "pointer",
               boxShadow: "0 0 30px rgba(56, 189, 248, 0.2)",
-              textDecoration: "none",
             }}>
               Start Free →
-            </a>
+            </button>
             <a href="https://github.com/hholaitan01/trackkit/blob/main/docs/quickstart.md" target="_blank" rel="noopener noreferrer" style={{
               padding: "14px 28px", borderRadius: 10,
               background: "transparent",
@@ -821,6 +1014,7 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
             price="$0"
             features={["500 deliveries/mo", "Tracking widget", "REST API", "Community support"]}
             cta="Start Free"
+            onCta={() => setShowSignup(true)}
           />
           <PricingCard
             tier="Growth"
@@ -828,6 +1022,7 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
             period="/mo"
             features={["5,000 deliveries/mo", "Custom branding", "Webhooks", "Email support"]}
             cta="Get Started"
+            onCta={() => setShowSignup(true)}
           />
           <PricingCard
             tier="Scale"
@@ -836,12 +1031,14 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
             highlight
             features={["50,000 deliveries/mo", "Custom domain", "Priority support", "Analytics dashboard"]}
             cta="Get Started"
+            onCta={() => setShowSignup(true)}
           />
           <PricingCard
             tier="Managed"
             price="Custom"
             features={["Unlimited deliveries", "Full setup by us", "n8n automations", "Dedicated support"]}
             cta="Contact Us"
+            onCta={() => window.location.href = "mailto:hello@trackkit.dev?subject=TrackKit Managed Plan"}
           />
         </div>
       </section>
@@ -866,18 +1063,18 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
         }}>
           500 free deliveries. No credit card required.
         </p>
-        <a href="https://github.com/hholaitan01/trackkit" target="_blank" rel="noopener noreferrer" style={{
-          display: "inline-block",
+        <button onClick={() => setShowSignup(true)} style={{
           padding: "16px 40px", borderRadius: 12,
           background: "linear-gradient(135deg, #38bdf8, #0ea5e9)",
           border: "none", color: "#060a14",
           fontSize: 16, fontWeight: 800, cursor: "pointer",
           boxShadow: "0 0 40px rgba(56, 189, 248, 0.25)",
-          textDecoration: "none",
         }}>
-          Get Started on GitHub →
-        </a>
+          Get Your API Keys →
+        </button>
       </section>
+
+      <SignupModal isOpen={showSignup} onClose={() => setShowSignup(false)} />
 
       {/* Footer */}
       <footer style={{
