@@ -51,8 +51,8 @@ const STATUS_LABELS: Record<string, string> = {
   CANCELLED: "Cancelled",
 };
 
-const DEFAULT_API_URL = "https://api.trackkit.dev";
-const DEFAULT_WS_URL = "wss://api.trackkit.dev/ws";
+const DEFAULT_API_URL = "https://trackkitapi-production.up.railway.app";
+const DEFAULT_WS_URL = "wss://trackkitapi-production.up.railway.app/ws";
 const TILE_URL = "https://tiles.openfreemap.org/styles/liberty";
 
 class TrackKitWidget {
@@ -291,7 +291,7 @@ class TrackKitWidget {
             <span>${this.truncate(d.dropoff.address, 15)}</span>
           </div>
         </div>
-        <div class="tk-powered">Powered by <a href="https://trackkit.dev" target="_blank">TrackKit</a></div>
+        <div class="tk-powered">Powered by <a href="https://track-kit.vercel.app" target="_blank">TrackKit</a></div>
       </div>
     `;
 

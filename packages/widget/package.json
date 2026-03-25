@@ -1,10 +1,22 @@
 {
-  "name": "@trackkit/widget",
+  "name": "trackkit-widget",
   "version": "0.1.0",
   "description": "Embeddable delivery tracking widget. Drop-in real-time tracking for any app.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hholaitan01/trackkit",
+    "directory": "packages/widget"
+  },
+  "homepage": "https://track-kit.vercel.app",
   "main": "dist/trackkit-widget.js",
   "module": "dist/trackkit-widget.esm.js",
-  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/trackkit-widget.esm.js",
+      "require": "./dist/trackkit-widget.js"
+    }
+  },
   "scripts": {
     "dev": "vite build --watch",
     "build": "vite build"
@@ -16,5 +28,17 @@
     "vite": "^5.0.0",
     "typescript": "^5.4.0"
   },
-  "files": ["dist"]
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "delivery",
+    "tracking",
+    "widget",
+    "embed",
+    "maps",
+    "realtime",
+    "logistics",
+    "maplibre"
+  ]
 }
