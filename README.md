@@ -1,10 +1,17 @@
 # TrackKit
 
+[![API Status](https://img.shields.io/badge/API-live-22c55e?style=flat-square)](https://trackkitapi-production.up.railway.app/health)
+[![Landing Page](https://img.shields.io/badge/site-track--kit.vercel.app-38bdf8?style=flat-square)](https://track-kit.vercel.app)
+[![npm](https://img.shields.io/npm/v/trackkit-sdk?style=flat-square&color=cb3837)](https://www.npmjs.com/package/trackkit-sdk)
+[![License: MIT](https://img.shields.io/badge/license-MIT-yellow?style=flat-square)](LICENSE)
+
 **Real-time delivery tracking infrastructure. The open source alternative to Google Maps for logistics.**
 
 No API keys from Google. No billing surprises. Built on OpenStreetMap.
 
 TrackKit gives delivery and ride-sharing apps everything they need: an embeddable tracking widget, REST + WebSocket APIs, auto-ETA, webhooks, and multi-tenant white-labeling — all for a fraction of what Google Maps charges.
+
+**[Live Site](https://track-kit.vercel.app)** · **[API Docs](https://track-kit.vercel.app/docs)** · **[npm SDK](https://www.npmjs.com/package/trackkit-sdk)**
 
 ## Why TrackKit?
 
@@ -23,65 +30,112 @@ TrackKit uses free, open-source mapping infrastructure. Your cost: **$0 for maps
 
 ## Quick Start
 
-### 1. Embed the tracking widget (3 lines)
-
-```html
-<div id="trackkit"
-  data-key="tk_live_abc123"
-  data-delivery="TK-2847"
-></div>
-<script src="https://cdn.trackkit.dev/v1/widget.js"></script>
-```
-
-### 2. Or use the SDK
+### 1. Get your API keys
 
 ```bash
-npm install @trackkit/sdk
+curl -X POST https://trackkitapi-production.up.railway.app/v1/auth/signup \
+  -H "Content-Type: application/json" \
+  -d '{"name": "My Delivery App"}'
+```
+
+Response:
+
+```json
+{
+  "tenant": { "id": "clx...", "name": "My Delivery App", "slug": "my-delivery-app-a1b2c3", "plan": "FREE" },
+  "keys": {
+    "test": { "id": "clx...", "key": "tk_test_..." },
+    "live": { "id": "clx...", "key": "tk_live_..." }
+  },
+  "message": "Save your API keys — they won't be shown again in full."
+}
+```
+
+Or sign up at [track-kit.vercel.app](https://track-kit.vercel.app) — click **Start Free**.
+
+### 2. Create a delivery
+
+```bash
+curl -X POST https://trackkitapi-production.up.railway.app/v1/deliveries \
+  -H "Authorization: Bearer tk_test_YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "pickup": { "address": "Chicken Republic, Yaba, Lagos, Nigeria" },
+    "dropoff": { "address": "12 Adeola Odeku, Victoria Island, Lagos, Nigeria" },
+    "externalId": "ORDER-9842",
+    "metadata": { "customerName": "Tunde", "items": ["Jollof Rice x2", "Chicken x1"] }
+  }'
+```
+
+Returns a `trackingCode`, `trackingUrl`, ETA, and geocoded coordinates.
+
+### 3. Update driver location
+
+```bash
+curl -X POST https://trackkitapi-production.up.railway.app/v1/deliveries/DELIVERY_ID/location \
+  -H "Authorization: Bearer tk_test_YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"lat": 6.4738, "lng": 3.3952, "speed": 35}'
+```
+
+### 4. Or use the SDK
+
+```bash
+npm install trackkit-sdk
 ```
 
 ```typescript
-import TrackKit from '@trackkit/sdk'
+import TrackKit from 'trackkit-sdk'
 
-const tk = new TrackKit({ apiKey: 'tk_live_abc123' })
+const tk = new TrackKit({ apiKey: 'tk_test_YOUR_KEY' })
 
 // Create a delivery
 const delivery = await tk.deliveries.create({
-  pickup: { address: 'Yaba Tech, Lagos' },
-  dropoff: { address: 'Victoria Island, Lagos' },
+  pickup: { address: 'Yaba Tech, Lagos, Nigeria' },
+  dropoff: { address: 'Victoria Island, Lagos, Nigeria' },
   metadata: { orderId: 'ORD-123' }
 })
 
 console.log(delivery.trackingUrl)
-// → https://yourapp.trackkit.dev/track/TK-ABC123
 
 // Update driver location (from driver app)
 await tk.deliveries.updateLocation(delivery.id, {
-  lat: 6.4738,
-  lng: 3.3952,
-  speed: 35
+  lat: 6.4738, lng: 3.3952, speed: 35
 })
 
 // Subscribe to real-time updates
-const unsub = tk.realtime.subscribe('TK-ABC123', {
+const unsub = tk.realtime.subscribe(delivery.trackingCode, {
   onLocation: (data) => console.log(`Driver at ${data.lat}, ${data.lng}`),
   onStatus: (data) => console.log(`Status: ${data.status}`),
   onDelivered: () => console.log('Order delivered!')
 })
 ```
 
-### 3. Receive webhooks
+### 5. Receive webhooks
 
 ```json
 {
   "event": "delivery.status_changed",
   "data": {
-    "id": "del_2847",
-    "trackingCode": "TK-2847",
+    "id": "clx7abc123",
+    "trackingCode": "TK-J8K2M1",
     "status": "ARRIVING",
     "previousStatus": "DELIVERING"
-  }
+  },
+  "timestamp": "2026-03-20T14:30:00Z",
+  "id": "wh_1710940200_abc123"
 }
 ```
+
+## Live Deployment
+
+| Service | URL |
+|---|---|
+| API | https://trackkitapi-production.up.railway.app |
+| Health Check | https://trackkitapi-production.up.railway.app/health |
+| Landing Page | https://track-kit.vercel.app |
+| Docs | https://track-kit.vercel.app/docs |
+| npm SDK | https://www.npmjs.com/package/trackkit-sdk |
 
 ## Architecture
 
@@ -89,7 +143,7 @@ const unsub = tk.realtime.subscribe('TK-ABC123', {
 Customer App (your app)
     │ embeds
     ▼
-TrackKit Widget ◄──── WebSocket ────► TrackKit API
+TrackKit Widget ◄──── WebSocket ────► TrackKit API (Railway)
     (JS SDK)                              │
                                           │ receives GPS
                                           ▼
@@ -106,13 +160,15 @@ TrackKit API uses:                        │
 
 ## Packages
 
-| Package | Description |
-|---|---|
-| `@trackkit/sdk` | TypeScript SDK for the TrackKit API |
-| `@trackkit/widget` | Embeddable tracking widget (drop-in JS) |
-| `@trackkit/api` | Fastify API server (self-hostable) |
+| Package | Description | Status |
+|---|---|---|
+| [`trackkit-sdk`](https://www.npmjs.com/package/trackkit-sdk) | TypeScript SDK for the TrackKit API | Published on npm |
+| `@trackkit/widget` | Embeddable tracking widget (drop-in JS) | In progress |
+| `@trackkit/api` | Fastify API server (self-hostable) | Live on Railway |
 
 ## API Reference
+
+Full docs at **[track-kit.vercel.app/docs](https://track-kit.vercel.app/docs)**.
 
 ### Deliveries
 
@@ -143,9 +199,15 @@ TrackKit API uses:                        │
 | `GET` | `/v1/webhooks` | List webhooks |
 | `DELETE` | `/v1/webhooks/:id` | Delete webhook |
 
+### Auth (public)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/v1/auth/signup` | Create tenant + API keys |
+
 ### WebSocket
 
-Connect to `wss://api.trackkit.dev/ws/track/:trackingCode` to receive real-time updates:
+Connect to `wss://trackkitapi-production.up.railway.app/ws/track/:trackingCode` for real-time updates:
 
 ```json
 // Location update
@@ -158,6 +220,15 @@ Connect to `wss://api.trackkit.dev/ws/track/:trackingCode` to receive real-time 
 ### Public Tracking (no auth)
 
 `GET /track/:trackingCode` — Returns delivery info for the embeddable widget. No API key required.
+
+## Plan Limits
+
+| Plan | Deliveries/mo | API calls/min | Webhooks |
+|---|---|---|---|
+| Free | 500 | 100 | 1 |
+| Growth ($49/mo) | 5,000 | 500 | 5 |
+| Scale ($199/mo) | 50,000 | 2,000 | 20 |
+| Managed (custom) | Unlimited | 10,000 | 100 |
 
 ## Self-Hosting
 
@@ -185,7 +256,7 @@ First startup takes 15-30 minutes while OSM data downloads and indexes. After th
 ## Development
 
 ```bash
-git clone https://github.com/yourusername/trackkit
+git clone https://github.com/hholaitan01/trackkit
 cd trackkit
 pnpm install
 
