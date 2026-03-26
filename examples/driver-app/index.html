@@ -14,56 +14,9 @@
       -webkit-font-smoothing: antialiased;
     }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-    /* ─── Auth Screen ─── */
-    .auth-screen {
-      display: flex; align-items: center; justify-content: center;
-      min-height: 100vh; padding: 16px;
-    }
-    .auth-card {
-      width: 100%; max-width: 380px; padding: 32px 28px;
-      background: linear-gradient(145deg, #0c1222, #0a0f1a);
-      border: 1px solid rgba(56, 189, 248, 0.12);
-      border-radius: 20px;
-    }
-    .logo {
-      display: flex; align-items: center; justify-content: center;
-      gap: 10px; margin-bottom: 8px; text-decoration: none; color: #f0f9ff;
-    }
-    .logo-icon {
-      width: 32px; height: 32px; border-radius: 10px;
-      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px; font-weight: 900; color: #060a14;
-    }
-    .logo span { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; }
-    .subtitle {
-      font-size: 13px; color: rgba(56, 189, 248, 0.5); font-weight: 600;
-      text-align: center; margin-bottom: 32px;
-    }
-
-    /* ─── Form Elements ─── */
-    .label {
-      display: block; font-size: 11px; font-weight: 700;
-      color: rgba(148, 163, 184, 0.5); letter-spacing: 0.04em; margin-bottom: 6px;
-    }
-    .input {
-      width: 100%; padding: 14px 16px; border-radius: 10px;
-      border: 1px solid rgba(56, 189, 248, 0.15);
-      background: rgba(6, 10, 20, 0.8); color: #f0f9ff;
-      font-size: 14px; outline: none; font-family: 'JetBrains Mono', monospace;
-    }
-    .input:focus { border-color: rgba(56, 189, 248, 0.4); }
-    .btn-primary {
-      width: 100%; padding: 14px; border-radius: 10px; border: none;
-      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
-      color: #060a14; font-size: 14px; font-weight: 700;
-      cursor: pointer; margin-top: 16px; font-family: inherit;
-    }
-    .btn-primary:active { opacity: 0.85; }
-    .error { font-size: 12px; color: #ef4444; margin-top: 8px; text-align: center; }
-
-    /* ─── Main Screen ─── */
+    /* ─── Header ─── */
     .header {
       display: flex; justify-content: space-between; align-items: center;
       padding: 12px 16px; border-bottom: 1px solid rgba(56, 189, 248, 0.06);
@@ -71,13 +24,19 @@
       position: sticky; top: 0; z-index: 50;
     }
     .header-left { display: flex; align-items: center; gap: 8px; }
-    .header-left .logo-icon { width: 28px; height: 28px; font-size: 12px; }
-    .header-right { display: flex; align-items: center; gap: 12px; }
+    .logo-icon {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 900; color: #060a14;
+    }
+    .header-right { display: flex; align-items: center; gap: 10px; }
     .btn-ghost {
       padding: 6px 14px; border-radius: 8px; font-size: 11px; font-weight: 600;
       border: 1px solid rgba(56, 189, 248, 0.15); background: transparent;
       color: rgba(148, 163, 184, 0.5); cursor: pointer; font-family: inherit;
     }
+    .btn-ghost:hover { border-color: rgba(56, 189, 248, 0.3); color: rgba(148, 163, 184, 0.8); }
     .live-badge {
       display: flex; align-items: center; gap: 6px;
       padding: 4px 10px; border-radius: 20px;
@@ -88,8 +47,84 @@
       width: 6px; height: 6px; border-radius: 50%;
       background: #22c55e; animation: pulse 2s infinite;
     }
-    .content { padding: 16px 16px 100px; max-width: 480px; margin: 0 auto; }
+    .demo-badge {
+      display: flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 20px;
+      background: rgba(251, 191, 36, 0.12); border: 1px solid rgba(251, 191, 36, 0.25);
+      font-size: 10px; font-weight: 800; color: #fbbf24; letter-spacing: 0.05em;
+    }
+    .content { padding: 16px 16px 100px; max-width: 520px; margin: 0 auto; }
     .hidden { display: none !important; }
+    .label {
+      display: block; font-size: 11px; font-weight: 700;
+      color: rgba(148, 163, 184, 0.5); letter-spacing: 0.04em; margin-bottom: 6px;
+    }
+
+    /* ─── Hero Banner ─── */
+    .hero {
+      text-align: center; padding: 32px 20px 24px;
+      border-bottom: 1px solid rgba(56, 189, 248, 0.06);
+    }
+    .hero h1 {
+      font-size: 22px; font-weight: 900; letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #f0f9ff, #38bdf8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; margin-bottom: 8px;
+    }
+    .hero p {
+      font-size: 13px; color: rgba(148, 163, 184, 0.5); line-height: 1.6; max-width: 400px; margin: 0 auto;
+    }
+    .hero-actions {
+      display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap;
+    }
+    .btn-primary {
+      padding: 10px 20px; border-radius: 10px; border: none;
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+      color: #060a14; font-size: 13px; font-weight: 700;
+      cursor: pointer; font-family: inherit;
+    }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-secondary {
+      padding: 10px 20px; border-radius: 10px;
+      border: 1px solid rgba(56, 189, 248, 0.2); background: transparent;
+      color: #38bdf8; font-size: 13px; font-weight: 700;
+      cursor: pointer; font-family: inherit; text-decoration: none;
+    }
+    .btn-secondary:hover { border-color: rgba(56, 189, 248, 0.4); }
+
+    /* ─── Connect Modal ─── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 100; padding: 16px; backdrop-filter: blur(4px);
+    }
+    .modal {
+      width: 100%; max-width: 380px; padding: 28px 24px;
+      background: linear-gradient(145deg, #0c1222, #0a0f1a);
+      border: 1px solid rgba(56, 189, 248, 0.12);
+      border-radius: 20px;
+    }
+    .modal h2 {
+      font-size: 16px; font-weight: 800; margin-bottom: 4px; text-align: center;
+    }
+    .modal .subtitle {
+      font-size: 12px; color: rgba(148, 163, 184, 0.4); text-align: center; margin-bottom: 20px;
+    }
+    .input {
+      width: 100%; padding: 14px 16px; border-radius: 10px;
+      border: 1px solid rgba(56, 189, 248, 0.15);
+      background: rgba(6, 10, 20, 0.8); color: #f0f9ff;
+      font-size: 14px; outline: none; font-family: 'JetBrains Mono', monospace;
+    }
+    .input:focus { border-color: rgba(56, 189, 248, 0.4); }
+    .modal-actions { display: flex; gap: 8px; margin-top: 16px; }
+    .modal-actions .btn-primary { flex: 1; padding: 14px; }
+    .modal-actions .btn-cancel {
+      padding: 14px 20px; border-radius: 10px; border: 1px solid rgba(148, 163, 184, 0.15);
+      background: transparent; color: rgba(148, 163, 184, 0.5);
+      font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;
+    }
+    .error { font-size: 12px; color: #ef4444; margin-top: 8px; text-align: center; }
 
     /* ─── GPS Card ─── */
     .gps-card {
@@ -113,9 +148,7 @@
       font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums;
     }
     .stat-value.accent { color: #38bdf8; }
-    .gps-empty {
-      font-size: 13px; color: rgba(148, 163, 184, 0.35); text-align: center; padding: 16px 0;
-    }
+    .stat-value.demo { color: rgba(240, 249, 255, 0.4); }
 
     /* ─── Delivery Selector ─── */
     .section-header {
@@ -125,8 +158,7 @@
     .delivery-item {
       padding: 12px 14px; border-radius: 10px; text-align: left; cursor: pointer;
       border: 1px solid rgba(56, 189, 248, 0.08); background: rgba(12, 18, 34, 0.4);
-      transition: all 0.15s; width: 100%; font-family: inherit;
-      color: inherit;
+      transition: all 0.15s; width: 100%; font-family: inherit; color: inherit;
     }
     .delivery-item.active {
       border-color: rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.08);
@@ -145,11 +177,6 @@
       display: flex; gap: 8px;
     }
     .delivery-route .arrow { color: rgba(56, 189, 248, 0.3); }
-    .empty-state {
-      padding: 20px; border-radius: 12px; text-align: center;
-      background: rgba(12, 18, 34, 0.5); border: 1px solid rgba(56, 189, 248, 0.06);
-      font-size: 12px; color: rgba(148, 163, 184, 0.35); margin-bottom: 16px;
-    }
 
     /* ─── Status Buttons ─── */
     .status-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
@@ -196,21 +223,28 @@
       font-size: 11px; color: rgba(148, 163, 184, 0.2); text-align: center; padding: 12px;
     }
 
-    /* ─── Code Sample Panel ─── */
+    /* ─── Code Panels ─── */
+    .code-section { margin-top: 24px; }
     .code-panel {
-      margin-top: 24px; padding: 16px; border-radius: 14px;
+      padding: 16px; border-radius: 14px; margin-bottom: 12px;
       background: rgba(12, 18, 34, 0.6); border: 1px solid rgba(56, 189, 248, 0.08);
     }
     .code-panel h3 {
-      font-size: 12px; font-weight: 700; color: rgba(56, 189, 248, 0.5);
-      letter-spacing: 0.04em; margin-bottom: 12px;
+      font-size: 11px; font-weight: 700; color: rgba(56, 189, 248, 0.5);
+      letter-spacing: 0.06em; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .code-panel h3 .step {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 20px; height: 20px; border-radius: 6px; font-size: 10px;
+      background: rgba(56, 189, 248, 0.12); color: #38bdf8;
     }
     .code-block {
       background: #0a0e18; border-radius: 8px; padding: 12px 14px;
       border: 1px solid rgba(56, 189, 248, 0.06);
       font-family: 'JetBrains Mono', monospace; font-size: 11px;
       line-height: 1.7; color: #94a3b8; overflow-x: auto;
-      white-space: pre; margin-bottom: 8px;
+      white-space: pre;
     }
     .code-block .kw { color: #c084fc; }
     .code-block .fn { color: #fbbf24; }
@@ -219,94 +253,123 @@
     .code-block .key { color: #38bdf8; }
     .code-block .num { color: #fbbf24; }
     .code-comment {
-      font-size: 11px; color: rgba(148, 163, 184, 0.35); line-height: 1.6; margin-top: 8px;
+      font-size: 11px; color: rgba(148, 163, 184, 0.35); line-height: 1.6; margin-top: 10px;
     }
+
+    /* ─── Flow Diagram ─── */
+    .flow {
+      display: flex; align-items: center; gap: 8px; justify-content: center;
+      flex-wrap: wrap; margin: 16px 0;
+    }
+    .flow-step {
+      padding: 8px 14px; border-radius: 10px; font-size: 11px; font-weight: 700;
+      background: rgba(12, 18, 34, 0.6); border: 1px solid rgba(56, 189, 248, 0.12);
+      color: rgba(148, 163, 184, 0.6);
+    }
+    .flow-step.highlight {
+      border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;
+      background: rgba(56, 189, 248, 0.08);
+    }
+    .flow-arrow { color: rgba(56, 189, 248, 0.25); font-size: 14px; }
+
+    /* ─── Footer ─── */
+    .footer {
+      text-align: center; padding: 24px 16px 16px;
+      font-size: 11px; color: rgba(148, 163, 184, 0.25);
+    }
+    .footer a { color: rgba(56, 189, 248, 0.5); text-decoration: none; }
+    .footer a:hover { color: #38bdf8; }
   </style>
 </head>
 <body>
 
-<!-- ═══════════════════ Auth Screen ═══════════════════ -->
-<div id="auth-screen" class="auth-screen">
-  <div class="auth-card">
-    <a href="https://track-kit.vercel.app" class="logo" target="_blank">
-      <div class="logo-icon">T</div>
-      <span>TrackKit</span>
-    </a>
-    <div class="subtitle">Driver Demo App</div>
-
-    <label class="label">API KEY</label>
-    <input id="key-input" class="input" placeholder="tk_test_..." autofocus />
-    <div id="auth-error" class="error hidden"></div>
-    <button id="connect-btn" class="btn-primary" onclick="authenticate()">Connect</button>
-
-    <p style="font-size: 11px; color: rgba(148, 163, 184, 0.3); text-align: center; margin-top: 20px;">
-      Don't have a key? <a href="https://track-kit.vercel.app/signup" target="_blank" style="color: rgba(56, 189, 248, 0.6);">Sign up free</a>
-    </p>
+<!-- ═══════════════════ Header ═══════════════════ -->
+<div class="header">
+  <div class="header-left">
+    <div class="logo-icon">T</div>
+    <span style="font-size: 14px; font-weight: 800;">Driver Demo</span>
+  </div>
+  <div class="header-right">
+    <div id="live-badge" class="live-badge hidden">
+      <div class="live-dot"></div>LIVE
+    </div>
+    <div id="demo-badge" class="demo-badge">DEMO</div>
+    <button id="connect-header-btn" class="btn-ghost" onclick="showConnectModal()">Connect API Key</button>
+    <button id="logout-btn" class="btn-ghost hidden" onclick="logout()">Disconnect</button>
   </div>
 </div>
 
-<!-- ═══════════════════ Main Screen ═══════════════════ -->
-<div id="main-screen" class="hidden">
-  <div class="header">
-    <div class="header-left">
-      <div class="logo-icon">T</div>
-      <span style="font-size: 14px; font-weight: 800;">Driver Demo</span>
+<!-- ═══════════════════ Hero (shown in demo mode) ═══════════════════ -->
+<div id="hero" class="hero">
+  <h1>TrackKit Driver App</h1>
+  <p>
+    This demo shows how to build a driver-side app with the TrackKit API.
+    Browse the UI and code below, or connect your API key to try it live.
+  </p>
+  <div class="hero-actions">
+    <button class="btn-primary" onclick="showConnectModal()">Connect API Key</button>
+    <a class="btn-secondary" href="https://track-kit.vercel.app/signup" target="_blank">Get a Free Key</a>
+  </div>
+</div>
+
+<!-- ═══════════════════ Main App UI ═══════════════════ -->
+<div class="content">
+  <!-- GPS Card -->
+  <div class="gps-card">
+    <div class="gps-header">
+      <span>GPS POSITION</span>
+      <span id="gps-fix" class="gps-fix hidden">FIX OK</span>
     </div>
-    <div class="header-right">
-      <div id="live-badge" class="live-badge hidden">
-        <div class="live-dot"></div>LIVE
-      </div>
-      <button class="btn-ghost" onclick="logout()">Logout</button>
+    <div id="gps-stats" class="stats-grid">
+      <div><div class="stat-label">LAT</div><div id="stat-lat" class="stat-value demo">40.748817</div></div>
+      <div><div class="stat-label">LNG</div><div id="stat-lng" class="stat-value demo">-73.985428</div></div>
+      <div><div class="stat-label">SPEED</div><div id="stat-speed" class="stat-value demo">32 km/h</div></div>
+      <div><div class="stat-label">HEADING</div><div id="stat-heading" class="stat-value demo">127°</div></div>
     </div>
   </div>
 
-  <div class="content">
-    <!-- GPS Card -->
-    <div class="gps-card">
-      <div class="gps-header">
-        <span>GPS POSITION</span>
-        <span id="gps-fix" class="gps-fix hidden">FIX OK</span>
-      </div>
-      <div id="gps-stats" class="stats-grid hidden">
-        <div><div class="stat-label">LAT</div><div id="stat-lat" class="stat-value">--</div></div>
-        <div><div class="stat-label">LNG</div><div id="stat-lng" class="stat-value">--</div></div>
-        <div><div class="stat-label">SPEED</div><div id="stat-speed" class="stat-value accent">--</div></div>
-        <div><div class="stat-label">HEADING</div><div id="stat-heading" class="stat-value">--</div></div>
-      </div>
-      <div id="gps-empty" class="gps-empty">Start tracking to enable GPS</div>
+  <!-- Delivery Selector -->
+  <div class="section-header">
+    <label class="label" style="margin: 0;">ACTIVE DELIVERIES</label>
+    <button id="refresh-btn" class="btn-ghost" style="font-size: 10px; padding: 4px 10px;" onclick="loadDeliveries()">Refresh</button>
+  </div>
+  <div id="delivery-list"></div>
+
+  <!-- Status Controls -->
+  <div id="status-section">
+    <label class="label" style="margin-bottom: 8px;">UPDATE STATUS</label>
+    <div class="status-btns" id="status-btns"></div>
+  </div>
+
+  <!-- Tracking Button -->
+  <button id="track-btn" class="track-btn start" onclick="toggleTracking()">
+    ▶  Start Tracking
+  </button>
+
+  <!-- Activity Log -->
+  <label class="label" style="margin-bottom: 8px;">ACTIVITY LOG</label>
+  <div id="log-box" class="log-box"></div>
+
+  <!-- Code Examples -->
+  <div class="code-section">
+    <label class="label" style="margin-bottom: 12px;">HOW IT WORKS</label>
+
+    <div class="flow">
+      <div class="flow-step highlight">Browser GPS</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step highlight">TrackKit API</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step">ETA + WebSocket</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step">Tracking Widget</div>
     </div>
 
-    <!-- Delivery Selector -->
-    <div class="section-header">
-      <label class="label" style="margin: 0;">ACTIVE DELIVERIES</label>
-      <button class="btn-ghost" style="font-size: 10px; padding: 4px 10px;" onclick="loadDeliveries()">Refresh</button>
-    </div>
-    <div id="delivery-list"></div>
-
-    <!-- Status Controls -->
-    <div id="status-section" class="hidden">
-      <label class="label" style="margin-bottom: 8px;">UPDATE STATUS</label>
-      <div class="status-btns" id="status-btns"></div>
-    </div>
-
-    <!-- Tracking Button -->
-    <button id="track-btn" class="track-btn start" disabled onclick="toggleTracking()">
-      ▶  Start Tracking
-    </button>
-
-    <!-- Activity Log -->
-    <label class="label" style="margin-bottom: 8px;">ACTIVITY LOG</label>
-    <div id="log-box" class="log-box">
-      <div class="log-empty">No activity yet</div>
-    </div>
-
-    <!-- Code Sample -->
     <div class="code-panel">
-      <h3>HOW THIS WORKS</h3>
-      <div class="code-block"><span class="cm">// 1. Get GPS from browser</span>
+      <h3><span class="step">1</span> SEND DRIVER LOCATION</h3>
+      <div class="code-block"><span class="cm">// Get GPS from browser</span>
 navigator.geolocation.<span class="fn">watchPosition</span>(<span class="kw">pos</span> => {
 
-  <span class="cm">// 2. Send to TrackKit API every 5s</span>
+  <span class="cm">// Send to TrackKit every 5 seconds</span>
   <span class="fn">fetch</span>(<span class="str">`${API}/v1/deliveries/${id}/location`</span>, {
     method: <span class="str">"POST"</span>,
     headers: {
@@ -322,11 +385,71 @@ navigator.geolocation.<span class="fn">watchPosition</span>(<span class="kw">pos
   })
 })</div>
       <div class="code-comment">
-        That's it. The API auto-calculates ETA, broadcasts location
-        via WebSocket to all tracking widget subscribers, and triggers
-        status transitions (e.g. DELIVERING → ARRIVING when &lt;200m away).
+        The API auto-calculates ETA, broadcasts location via WebSocket to all
+        tracking widget subscribers, and triggers status transitions when close
+        to the dropoff (e.g. DELIVERING → ARRIVING at &lt;200m).
       </div>
     </div>
+
+    <div class="code-panel">
+      <h3><span class="step">2</span> UPDATE DELIVERY STATUS</h3>
+      <div class="code-block"><span class="fn">fetch</span>(<span class="str">`${API}/v1/deliveries/${id}/status`</span>, {
+  method: <span class="str">"PATCH"</span>,
+  headers: {
+    <span class="key">"Authorization"</span>: <span class="str">`Bearer ${apiKey}`</span>,
+    <span class="key">"Content-Type"</span>: <span class="str">"application/json"</span>
+  },
+  body: JSON.<span class="fn">stringify</span>({
+    <span class="key">status</span>: <span class="str">"DELIVERING"</span>
+  })
+})</div>
+      <div class="code-comment">
+        Valid transitions: PICKUP_EN_ROUTE → PICKED_UP → DELIVERING → DELIVERED.
+        Status changes are broadcast via WebSocket and trigger webhook events.
+      </div>
+    </div>
+
+    <div class="code-panel">
+      <h3><span class="step">3</span> LIST ACTIVE DELIVERIES</h3>
+      <div class="code-block"><span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`${API}/v1/deliveries?status=DELIVERING`</span>, {
+  headers: {
+    <span class="key">"Authorization"</span>: <span class="str">`Bearer ${apiKey}`</span>
+  }
+})
+
+<span class="kw">const</span> { data } = <span class="kw">await</span> res.<span class="fn">json</span>()
+<span class="cm">// data = [{ id, trackingCode, status, pickupAddress, ... }]</span></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Built with zero dependencies to show how to integrate
+    <a href="https://track-kit.vercel.app" target="_blank">TrackKit</a> in any driver app.<br/>
+    View source or copy this file — it's a single HTML file.
+    <br/><br/>
+    <a href="https://track-kit.vercel.app/docs" target="_blank">API Docs</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/hholaitan01/trackkit" target="_blank">GitHub</a>
+    &nbsp;·&nbsp;
+    <a href="https://track-kit.vercel.app/signup" target="_blank">Get API Key</a>
+  </div>
+</div>
+
+<!-- ═══════════════════ Connect Modal ═══════════════════ -->
+<div id="connect-modal" class="modal-overlay hidden" onclick="if(event.target===this)hideConnectModal()">
+  <div class="modal">
+    <h2>Connect to TrackKit</h2>
+    <div class="subtitle">Enter your API key to use real deliveries and GPS</div>
+    <label class="label">API KEY</label>
+    <input id="key-input" class="input" placeholder="tk_test_..." />
+    <div id="auth-error" class="error hidden"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="hideConnectModal()">Cancel</button>
+      <button class="btn-primary" onclick="authenticate()">Connect</button>
+    </div>
+    <p style="font-size: 11px; color: rgba(148, 163, 184, 0.3); text-align: center; margin-top: 16px;">
+      Don't have a key? <a href="https://track-kit.vercel.app/signup" target="_blank" style="color: rgba(56, 189, 248, 0.6);">Sign up free</a>
+    </p>
   </div>
 </div>
 
@@ -339,6 +462,7 @@ const API = "https://trackkitapi-production.up.railway.app";
 const STATUSES = ["PICKUP_EN_ROUTE", "PICKED_UP", "DELIVERING", "DELIVERED"];
 
 let apiKey = "";
+let connected = false;
 let deliveries = [];
 let selectedId = "";
 let tracking = false;
@@ -346,6 +470,62 @@ let watchId = null;
 let intervalId = null;
 let currentPos = null;
 let sendCount = 0;
+
+// ─── Demo Data ───
+const DEMO_DELIVERIES = [
+  {
+    id: "demo-1",
+    trackingCode: "TK-8294XR",
+    status: "PICKUP_EN_ROUTE",
+    pickupAddress: "123 Warehouse Ave, Manhattan",
+    dropoffAddress: "456 Park St, Brooklyn"
+  },
+  {
+    id: "demo-2",
+    trackingCode: "TK-3017PQ",
+    status: "DELIVERING",
+    pickupAddress: "789 Depot Rd, Queens",
+    dropoffAddress: "101 Main St, Bronx"
+  }
+];
+
+// ─── Demo Simulation ───
+let demoInterval = null;
+let demoLat = 40.748817;
+let demoLng = -73.985428;
+
+function startDemoSimulation() {
+  addLog("Demo mode — simulated GPS data");
+  addLog("Connect your API key to use real deliveries");
+
+  demoInterval = setInterval(() => {
+    // Simulate small GPS movement
+    demoLat += (Math.random() - 0.48) * 0.0005;
+    demoLng += (Math.random() - 0.48) * 0.0005;
+    const speed = (25 + Math.random() * 20).toFixed(0);
+    const heading = Math.floor(Math.random() * 360);
+
+    document.getElementById("stat-lat").textContent = demoLat.toFixed(6);
+    document.getElementById("stat-lng").textContent = demoLng.toFixed(6);
+    document.getElementById("stat-speed").textContent = `${speed} km/h`;
+    document.getElementById("stat-heading").textContent = `${heading}°`;
+  }, 3000);
+}
+
+function stopDemoSimulation() {
+  if (demoInterval) { clearInterval(demoInterval); demoInterval = null; }
+}
+
+// ─── Connect Modal ───
+function showConnectModal() {
+  document.getElementById("connect-modal").classList.remove("hidden");
+  document.getElementById("key-input").focus();
+  document.getElementById("auth-error").classList.add("hidden");
+}
+
+function hideConnectModal() {
+  document.getElementById("connect-modal").classList.add("hidden");
+}
 
 // ─── Auth ───
 function authenticate() {
@@ -360,10 +540,12 @@ function authenticate() {
   })
     .then(r => { if (!r.ok) throw new Error(); return r.json(); })
     .then(() => {
+      connected = true;
       localStorage.setItem("tk_driver_key", apiKey);
-      document.getElementById("auth-screen").classList.add("hidden");
-      document.getElementById("main-screen").classList.remove("hidden");
-      addLog("Authenticated");
+      hideConnectModal();
+      stopDemoSimulation();
+      switchToLiveMode();
+      addLog("Connected to TrackKit API", "status");
       loadDeliveries();
     })
     .catch(() => showError("auth-error", "Invalid API key"));
@@ -371,13 +553,43 @@ function authenticate() {
 
 function logout() {
   stopTracking();
+  connected = false;
+  apiKey = "";
+  deliveries = [];
+  selectedId = "";
   localStorage.removeItem("tk_driver_key");
-  document.getElementById("main-screen").classList.add("hidden");
-  document.getElementById("auth-screen").classList.remove("hidden");
+  switchToDemoMode();
+  clearLog();
+  initDemo();
+}
+
+function switchToLiveMode() {
+  document.getElementById("hero").classList.add("hidden");
+  document.getElementById("demo-badge").classList.add("hidden");
+  document.getElementById("connect-header-btn").classList.add("hidden");
+  document.getElementById("logout-btn").classList.remove("hidden");
+
+  // Reset GPS display for real data
+  document.querySelectorAll(".stat-value").forEach(el => el.classList.remove("demo"));
+  document.getElementById("stat-lat").textContent = "--";
+  document.getElementById("stat-lng").textContent = "--";
+  document.getElementById("stat-speed").textContent = "--";
+  document.getElementById("stat-heading").textContent = "--";
+}
+
+function switchToDemoMode() {
+  document.getElementById("hero").classList.remove("hidden");
+  document.getElementById("demo-badge").classList.remove("hidden");
+  document.getElementById("connect-header-btn").classList.remove("hidden");
+  document.getElementById("logout-btn").classList.add("hidden");
+  document.getElementById("live-badge").classList.add("hidden");
+
+  document.querySelectorAll(".stat-value").forEach(el => el.classList.add("demo"));
 }
 
 // ─── Load Deliveries ───
 async function loadDeliveries() {
+  if (!connected) return;
   deliveries = [];
   const active = ["CONFIRMED", "DRIVER_ASSIGNED", "PICKUP_EN_ROUTE", "PICKED_UP", "DELIVERING", "ARRIVING"];
 
@@ -396,12 +608,14 @@ async function loadDeliveries() {
 
 function renderDeliveries() {
   const el = document.getElementById("delivery-list");
-  if (deliveries.length === 0) {
-    el.innerHTML = '<div class="empty-state">No active deliveries. Create one in the <a href="https://track-kit.vercel.app/dashboard/deliveries" target="_blank" style="color: #38bdf8;">dashboard</a> first.</div>';
+  const list = connected ? deliveries : DEMO_DELIVERIES;
+
+  if (list.length === 0) {
+    el.innerHTML = '<div style="padding: 20px; border-radius: 12px; text-align: center; background: rgba(12, 18, 34, 0.5); border: 1px solid rgba(56, 189, 248, 0.06); font-size: 12px; color: rgba(148, 163, 184, 0.35); margin-bottom: 16px;">No active deliveries. Create one in the <a href="https://track-kit.vercel.app/dashboard/deliveries" target="_blank" style="color: #38bdf8;">dashboard</a> first.</div>';
     return;
   }
 
-  el.innerHTML = '<div class="delivery-list">' + deliveries.map(d => `
+  el.innerHTML = '<div class="delivery-list">' + list.map(d => `
     <button class="delivery-item ${d.id === selectedId ? 'active' : ''}" onclick="selectDelivery('${d.id}')">
       <div class="delivery-item-top">
         <span class="delivery-code">${d.trackingCode}</span>
@@ -424,12 +638,11 @@ function selectDelivery(id) {
 }
 
 function renderStatusButtons() {
-  const section = document.getElementById("status-section");
   const container = document.getElementById("status-btns");
-  const delivery = deliveries.find(d => d.id === selectedId);
-  if (!delivery) { section.classList.add("hidden"); return; }
+  const list = connected ? deliveries : DEMO_DELIVERIES;
+  const delivery = list.find(d => d.id === selectedId);
+  if (!delivery) return;
 
-  section.classList.remove("hidden");
   container.innerHTML = STATUSES.map(s =>
     `<button class="status-btn ${delivery.status === s ? 'active' : ''}" onclick="updateStatus('${s}')">${s.replace(/_/g, " ")}</button>`
   ).join("");
@@ -437,6 +650,18 @@ function renderStatusButtons() {
 
 // ─── Status Update ───
 async function updateStatus(status) {
+  if (!connected) {
+    // Demo mode: simulate locally
+    const d = DEMO_DELIVERIES.find(d => d.id === selectedId);
+    if (d) {
+      d.status = status;
+      addLog(`Status → ${status} (demo)`, "status");
+      renderDeliveries();
+      selectDelivery(selectedId);
+    }
+    return;
+  }
+
   try {
     const r = await fetch(`${API}/v1/deliveries/${selectedId}/status`, {
       method: "PATCH",
@@ -461,6 +686,24 @@ function toggleTracking() {
 
 function startTracking() {
   if (!selectedId) return;
+
+  if (!connected) {
+    // Demo mode: simulate tracking
+    tracking = true;
+    sendCount = 0;
+    updateTrackingUI();
+    addLog("Simulated GPS tracking started (demo)");
+
+    intervalId = setInterval(() => {
+      sendCount++;
+      demoLat += (Math.random() - 0.48) * 0.0005;
+      demoLng += (Math.random() - 0.48) * 0.0005;
+      addLog(`Sent: ${demoLat.toFixed(6)}, ${demoLng.toFixed(6)} · ${(25 + Math.random() * 20).toFixed(0)} km/h (demo)`);
+      updateTrackingUI();
+    }, 5000);
+    return;
+  }
+
   if (!navigator.geolocation) { addLog("Geolocation not supported", "error"); return; }
 
   tracking = true;
@@ -473,7 +716,7 @@ function startTracking() {
       currentPos = {
         lat: pos.coords.latitude,
         lng: pos.coords.longitude,
-        speed: pos.coords.speed ? pos.coords.speed * 3.6 : 0, // m/s → km/h
+        speed: pos.coords.speed ? pos.coords.speed * 3.6 : 0,
         heading: pos.coords.heading || 0
       };
       updateGPSDisplay();
@@ -482,9 +725,7 @@ function startTracking() {
     { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
   );
 
-  // Send location every 5 seconds
   intervalId = setInterval(sendLocation, 5000);
-  // First send after 1s
   setTimeout(sendLocation, 1000);
 }
 
@@ -529,8 +770,6 @@ async function sendLocation() {
 // ─── UI Updates ───
 function updateGPSDisplay() {
   if (!currentPos) return;
-  document.getElementById("gps-stats").classList.remove("hidden");
-  document.getElementById("gps-empty").classList.add("hidden");
   document.getElementById("gps-fix").classList.remove("hidden");
   document.getElementById("stat-lat").textContent = currentPos.lat.toFixed(6);
   document.getElementById("stat-lng").textContent = currentPos.lng.toFixed(6);
@@ -545,7 +784,7 @@ function updateTrackingUI() {
   if (tracking) {
     btn.className = "track-btn stop";
     btn.textContent = `■  Stop Tracking  (${sendCount} sent)`;
-    badge.classList.remove("hidden");
+    if (connected) badge.classList.remove("hidden");
   } else {
     btn.className = "track-btn start";
     btn.textContent = "▶  Start Tracking";
@@ -556,16 +795,15 @@ function updateTrackingUI() {
 
 function addLog(msg, type = "") {
   const box = document.getElementById("log-box");
-  const empty = box.querySelector(".log-empty");
-  if (empty) empty.remove();
-
   const entry = document.createElement("div");
   entry.className = `log-entry ${type}`;
   entry.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
   box.prepend(entry);
-
-  // Keep max 50 entries
   while (box.children.length > 50) box.lastChild.remove();
+}
+
+function clearLog() {
+  document.getElementById("log-box").innerHTML = "";
 }
 
 function showError(id, msg) {
@@ -575,16 +813,49 @@ function showError(id, msg) {
 }
 
 // ─── Init ───
-(function init() {
-  const saved = localStorage.getItem("tk_driver_key");
-  if (saved) {
-    document.getElementById("key-input").value = saved;
-  }
+function initDemo() {
+  // Show demo deliveries
+  renderDeliveries();
+  renderStatusButtons();
 
+  // Show simulated log activity
+  addLog("Demo mode — click around to explore the UI");
+  addLog("Connect an API key to send real GPS data");
+
+  // Animate GPS values
+  startDemoSimulation();
+}
+
+(function init() {
   // Enter key on input
   document.getElementById("key-input").addEventListener("keydown", e => {
     if (e.key === "Enter") authenticate();
   });
+
+  // Check for saved key
+  const saved = localStorage.getItem("tk_driver_key");
+  if (saved) {
+    apiKey = saved;
+    document.getElementById("key-input").value = saved;
+
+    // Auto-connect with saved key
+    fetch(`${API}/v1/tenants/me`, {
+      headers: { Authorization: `Bearer ${saved}` }
+    })
+      .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+      .then(() => {
+        connected = true;
+        switchToLiveMode();
+        addLog("Connected with saved API key", "status");
+        loadDeliveries();
+      })
+      .catch(() => {
+        localStorage.removeItem("tk_driver_key");
+        initDemo();
+      });
+  } else {
+    initDemo();
+  }
 })();
 </script>
 </body>
