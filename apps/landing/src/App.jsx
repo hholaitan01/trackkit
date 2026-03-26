@@ -642,7 +642,7 @@ function SignupModal({ isOpen, onClose }) {
             ))}
 
             <a
-              href="https://github.com/hholaitan01/trackkit/blob/main/docs/quickstart.md"
+              href="https://dashboard-nu-teal-99.vercel.app"
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -655,7 +655,23 @@ function SignupModal({ isOpen, onClose }) {
                 boxSizing: "border-box",
               }}
             >
-              Read the Quickstart Guide →
+              Open Dashboard →
+            </a>
+            <a
+              href="/docs"
+              onClick={(e) => { e.preventDefault(); handleClose(); }}
+              style={{
+                display: "block", width: "100%", padding: "12px",
+                borderRadius: 10,
+                border: "1px solid rgba(56, 189, 248, 0.2)",
+                background: "transparent",
+                color: "#38bdf8", fontSize: 13, fontWeight: 600,
+                cursor: "pointer", marginTop: 8,
+                textDecoration: "none", textAlign: "center",
+                boxSizing: "border-box",
+              }}
+            >
+              Read the Docs
             </a>
           </>
         )}
@@ -792,6 +808,15 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
               onMouseLeave={e => e.target.style.color = "rgba(148, 163, 184, 0.6)"}
             >{l.label}</a>
           ))}
+          <a href="https://dashboard-nu-teal-99.vercel.app" target="_blank" rel="noopener noreferrer" style={{
+            padding: "8px 18px", borderRadius: 8,
+            border: "1px solid rgba(56, 189, 248, 0.25)",
+            background: "transparent",
+            color: "#38bdf8",
+            fontSize: 12, fontWeight: 700, cursor: "pointer",
+            textDecoration: "none",
+            marginRight: -8,
+          }}>Dashboard</a>
           <a href="https://github.com/hholaitan01/trackkit" target="_blank" rel="noopener noreferrer" style={{
             padding: "8px 18px", borderRadius: 8,
             background: "linear-gradient(135deg, #38bdf8, #0ea5e9)",
