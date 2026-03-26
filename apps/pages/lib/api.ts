@@ -63,6 +63,9 @@ export const api = {
   createKey: (data: any) => request<any>("POST", "/v1/tenants/me/keys", data),
   deleteKey: (id: string) => request<any>("DELETE", `/v1/tenants/me/keys/${id}`),
 
+  // Analytics
+  analytics: () => request<any>("GET", "/v1/analytics"),
+
   // Webhooks
   listWebhooks: () => request<{ data: any[] }>("GET", "/v1/webhooks"),
   createWebhook: (data: any) => request<any>("POST", "/v1/webhooks", data),

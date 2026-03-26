@@ -7,6 +7,7 @@ import { driverRoutes } from "./routes/drivers";
 import { tenantRoutes } from "./routes/tenants";
 import { trackingRoutes } from "./routes/tracking";
 import { webhookRoutes } from "./routes/webhooks";
+import { analyticsRoutes } from "./routes/analytics";
 import { authRoutes } from "./routes/auth";
 import { wsHandler } from "./ws/handler";
 import { authMiddleware } from "./middleware/auth";
@@ -51,6 +52,7 @@ async function bootstrap() {
   app.register(driverRoutes, { prefix: "/v1/drivers" });
   app.register(tenantRoutes, { prefix: "/v1/tenants" });
   app.register(webhookRoutes, { prefix: "/v1/webhooks" });
+  app.register(analyticsRoutes, { prefix: "/v1/analytics" });
 
   // ─── Public routes (no auth) ───
   app.register(authRoutes, { prefix: "/v1/auth" });

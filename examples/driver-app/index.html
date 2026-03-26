@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>TrackKit Driver Demo</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -16,7 +14,6 @@
       -webkit-font-smoothing: antialiased;
     }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
     /* ─── Header ─── */
     .header {
@@ -128,48 +125,61 @@
     }
     .error { font-size: 12px; color: #ef4444; margin-top: 8px; text-align: center; }
 
-    /* ─── Map ─── */
-    .map-container {
-      position: relative; border-radius: 14px; overflow: hidden;
-      margin-bottom: 16px; border: 1px solid rgba(56, 189, 248, 0.08);
-    }
-    #map { height: 260px; width: 100%; background: #0a0e18; }
-    .map-overlay {
-      position: absolute; bottom: 10px; left: 10px; z-index: 1000;
-      display: flex; gap: 8px;
-    }
-    .map-stat {
-      padding: 6px 10px; border-radius: 8px;
-      background: rgba(6, 10, 20, 0.85); backdrop-filter: blur(8px);
+    /* ─── Tracking Widget (matches landing page) ─── */
+    .widget {
+      border-radius: 20px; overflow: hidden; margin-bottom: 16px;
+      background: linear-gradient(145deg, #0c1222 0%, #0a0f1a 100%);
       border: 1px solid rgba(56, 189, 248, 0.12);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px; font-weight: 700; color: #f0f9ff;
+      box-shadow: 0 0 60px rgba(56, 189, 248, 0.08), 0 25px 50px rgba(0,0,0,0.4);
     }
-    .map-stat .map-stat-label {
-      font-size: 8px; font-weight: 700; color: rgba(148, 163, 184, 0.4);
-      letter-spacing: 0.06em; display: block; margin-bottom: 1px;
+    .widget-header {
+      padding: 14px 18px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(56, 189, 248, 0.08);
     }
-    .map-stat.accent { color: #38bdf8; }
-    .leaflet-control-attribution { display: none !important; }
-    .leaflet-control-zoom { border: none !important; }
-    .leaflet-control-zoom a {
-      background: rgba(6, 10, 20, 0.85) !important; color: #94a3b8 !important;
-      border: 1px solid rgba(56, 189, 248, 0.12) !important;
-      backdrop-filter: blur(8px);
+    .widget-header-left { display: flex; align-items: center; gap: 10px; }
+    .widget-header-logo {
+      width: 30px; height: 30px; border-radius: 9px;
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 800; color: #0a0f1a;
     }
-    .leaflet-control-zoom a:hover { color: #f0f9ff !important; }
-    .driver-pulse {
-      width: 40px; height: 40px; border-radius: 50%;
-      background: rgba(56, 189, 248, 0.15);
-      border: 2px solid #38bdf8;
-      animation: pulse 2s infinite;
+    .widget-header-title { font-size: 13px; font-weight: 700; color: #f0f9ff; letter-spacing: -0.01em; }
+    .widget-header-sub { font-size: 10px; color: rgba(56, 189, 248, 0.5); font-weight: 500; margin-top: 1px; }
+    .widget-status {
+      padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 600;
+      display: flex; align-items: center; gap: 4px; transition: all 0.5s ease;
     }
-    .driver-dot {
-      width: 14px; height: 14px; border-radius: 50%;
-      background: #38bdf8; border: 3px solid #060a14;
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
-      position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
+    .widget-canvas { width: 100%; height: 220px; display: block; }
+    .widget-stats {
+      display: grid; grid-template-columns: 1fr 1px 1fr 1px 1fr;
+      padding: 14px 0;
+      border-top: 1px solid rgba(56, 189, 248, 0.08);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.08);
+    }
+    .widget-stat { text-align: center; }
+    .widget-stat-value {
+      font-size: 18px; font-weight: 800; letter-spacing: -0.02em;
+      color: #f0f9ff; font-variant-numeric: tabular-nums;
+    }
+    .widget-stat-value.accent { color: #38bdf8; }
+    .widget-stat-label {
+      font-size: 9px; font-weight: 600; color: rgba(148, 163, 184, 0.5);
+      letter-spacing: 0.08em; margin-top: 2px;
+    }
+    .widget-stat-divider { background: rgba(56, 189, 248, 0.08); }
+    .widget-progress { padding: 12px 20px 16px; }
+    .widget-progress-bar {
+      height: 3px; border-radius: 2px; background: rgba(56, 189, 248, 0.1); overflow: hidden;
+    }
+    .widget-progress-fill {
+      height: 100%; border-radius: 2px;
+      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+      transition: width 0.3s ease;
+    }
+    .widget-progress-labels {
+      display: flex; justify-content: space-between; margin-top: 8px;
+      font-size: 10px; color: rgba(148, 163, 184, 0.4); font-weight: 500;
     }
 
     /* ─── Delivery Selector ─── */
@@ -241,9 +251,6 @@
     .log-entry { font-size: 10px; line-height: 1.8; color: rgba(148, 163, 184, 0.4); }
     .log-entry.error { color: rgba(239, 68, 68, 0.6); }
     .log-entry.status { color: rgba(34, 197, 94, 0.6); }
-    .log-empty {
-      font-size: 11px; color: rgba(148, 163, 184, 0.2); text-align: center; padding: 12px;
-    }
 
     /* ─── Code Panels ─── */
     .code-section { margin-top: 24px; }
@@ -303,47 +310,30 @@
       .btn-ghost { padding: 5px 8px; font-size: 10px; }
       .demo-badge, .live-badge { padding: 3px 7px; font-size: 9px; }
       .logo-icon { width: 24px; height: 24px; font-size: 10px; border-radius: 6px; }
-
       .hero { padding: 24px 16px 20px; }
       .hero h1 { font-size: 18px; }
       .hero p { font-size: 12px; }
-      .hero-actions { gap: 8px; }
-      .btn-primary, .btn-secondary { padding: 10px 16px; font-size: 12px; }
-
       .content { padding: 12px 12px 80px; }
-      #map { height: 220px; }
-      .map-overlay { bottom: 8px; left: 8px; gap: 6px; }
-      .map-stat { padding: 5px 8px; font-size: 10px; }
-
+      .widget-canvas { height: 180px; }
+      .widget-header { padding: 12px 14px; }
+      .widget-header-logo { width: 26px; height: 26px; font-size: 11px; }
+      .widget-header-title { font-size: 12px; }
+      .widget-stat-value { font-size: 15px; }
+      .widget-stat-label { font-size: 8px; }
       .delivery-item { padding: 10px 12px; }
       .delivery-code { font-size: 12px; }
-      .delivery-route { font-size: 10px; }
-
-      .status-btns { gap: 4px; }
       .status-btn { padding: 6px 8px; font-size: 9px; }
-
       .track-btn { padding: 14px; font-size: 14px; border-radius: 12px; }
-
-      .log-box { max-height: 150px; padding: 8px 10px; }
+      .log-box { max-height: 150px; }
       .log-entry { font-size: 9px; }
-
-      .code-block { font-size: 10px; padding: 10px 12px; line-height: 1.6; }
-      .code-comment { font-size: 10px; }
+      .code-block { font-size: 10px; padding: 10px 12px; }
       .code-panel { padding: 12px; }
-      .code-panel h3 { font-size: 10px; }
-
-      .flow { gap: 6px; }
       .flow-step { padding: 6px 10px; font-size: 10px; }
-      .flow-arrow { font-size: 12px; }
-
       .modal { padding: 24px 20px; }
-      .input { padding: 12px 14px; font-size: 13px; }
     }
-
     @media (max-width: 360px) {
       .header-left span { display: none; }
-      #map { height: 180px; }
-      .flow-step { padding: 5px 8px; font-size: 9px; }
+      .widget-canvas { height: 150px; }
       .status-btn { padding: 5px 6px; font-size: 8px; }
       .code-block { font-size: 9px; }
     }
@@ -375,7 +365,7 @@
   </div>
 </div>
 
-<!-- ═══════════════════ Hero (shown in demo mode) ═══════════════════ -->
+<!-- ═══════════════════ Hero ═══════════════════ -->
 <div id="hero" class="hero">
   <h1>TrackKit Driver App</h1>
   <p>
@@ -390,17 +380,47 @@
 
 <!-- ═══════════════════ Main App UI ═══════════════════ -->
 <div class="content">
-  <!-- Map -->
-  <div class="map-container">
-    <div id="map"></div>
-    <div class="map-overlay">
-      <div class="map-stat accent">
-        <span class="map-stat-label">SPEED</span>
-        <span id="stat-speed">32 km/h</span>
+  <!-- Tracking Widget -->
+  <div class="widget">
+    <div class="widget-header">
+      <div class="widget-header-left">
+        <div class="widget-header-logo">T</div>
+        <div>
+          <div class="widget-header-title" id="widget-title">Order #TK-8294XR</div>
+          <div class="widget-header-sub" id="widget-sub">Warehouse Ave → Park St</div>
+        </div>
       </div>
-      <div class="map-stat">
-        <span class="map-stat-label">HEADING</span>
-        <span id="stat-heading">127°</span>
+      <div class="widget-status" id="widget-status" style="background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.2); color: #38bdf8;">
+        <span>◎</span> <span id="widget-status-text">Awaiting</span>
+      </div>
+    </div>
+
+    <canvas id="map-canvas" class="widget-canvas"></canvas>
+
+    <div class="widget-stats">
+      <div class="widget-stat">
+        <div class="widget-stat-value accent" id="stat-eta">-- min</div>
+        <div class="widget-stat-label">ETA</div>
+      </div>
+      <div class="widget-stat-divider"></div>
+      <div class="widget-stat">
+        <div class="widget-stat-value" id="stat-dist">-- km</div>
+        <div class="widget-stat-label">DISTANCE</div>
+      </div>
+      <div class="widget-stat-divider"></div>
+      <div class="widget-stat">
+        <div class="widget-stat-value" id="stat-speed">-- km/h</div>
+        <div class="widget-stat-label">SPEED</div>
+      </div>
+    </div>
+
+    <div class="widget-progress">
+      <div class="widget-progress-bar">
+        <div class="widget-progress-fill" id="progress-fill" style="width: 0%"></div>
+      </div>
+      <div class="widget-progress-labels">
+        <span id="progress-from">Pickup</span>
+        <span id="progress-to">Dropoff</span>
       </div>
     </div>
   </div>
@@ -531,10 +551,6 @@ navigator.geolocation.<span class="fn">watchPosition</span>(<span class="kw">pos
 </div>
 
 <script>
-// ─── TrackKit Driver Demo ───
-// This file demonstrates how to build a driver app using the TrackKit API.
-// It uses the browser Geolocation API to send real GPS coordinates.
-
 const API = "https://trackkitapi-production.up.railway.app";
 const STATUSES = ["PICKUP_EN_ROUTE", "PICKED_UP", "DELIVERING", "DELIVERED"];
 
@@ -550,92 +566,256 @@ let sendCount = 0;
 
 // ─── Demo Data ───
 const DEMO_DELIVERIES = [
-  {
-    id: "demo-1",
-    trackingCode: "TK-8294XR",
-    status: "PICKUP_EN_ROUTE",
-    pickupAddress: "123 Warehouse Ave, Manhattan",
-    dropoffAddress: "456 Park St, Brooklyn"
-  },
-  {
-    id: "demo-2",
-    trackingCode: "TK-3017PQ",
-    status: "DELIVERING",
-    pickupAddress: "789 Depot Rd, Queens",
-    dropoffAddress: "101 Main St, Bronx"
-  }
+  { id: "demo-1", trackingCode: "TK-8294XR", status: "PICKUP_EN_ROUTE",
+    pickupAddress: "123 Warehouse Ave, Manhattan", dropoffAddress: "456 Park St, Brooklyn" },
+  { id: "demo-2", trackingCode: "TK-3017PQ", status: "DELIVERING",
+    pickupAddress: "789 Depot Rd, Queens", dropoffAddress: "101 Main St, Bronx" }
 ];
 
-// ─── Map Setup ───
-let map = null;
-let driverMarker = null;
-let trailLine = null;
-let trailCoords = [];
+// ─── Demo Route (Lagos: Yaba → Victoria Island — same as landing page) ───
+const ROUTE_POINTS = [
+  { lat: 6.5095, lng: 3.3711 }, { lat: 6.5055, lng: 3.3735 },
+  { lat: 6.4985, lng: 3.3782 }, { lat: 6.4921, lng: 3.3810 },
+  { lat: 6.4862, lng: 3.3855 }, { lat: 6.4795, lng: 3.3901 },
+  { lat: 6.4738, lng: 3.3952 }, { lat: 6.4680, lng: 3.3988 },
+  { lat: 6.4615, lng: 3.4035 }, { lat: 6.4558, lng: 3.4082 },
+  { lat: 6.4510, lng: 3.4110 }, { lat: 6.4462, lng: 3.4145 },
+  { lat: 6.4420, lng: 3.4178 }, { lat: 6.4385, lng: 3.4210 },
+  { lat: 6.4348, lng: 3.4255 }, { lat: 6.4312, lng: 3.4298 },
+  { lat: 6.4280, lng: 3.4350 },
+];
 
-function initMap(lat, lng) {
-  map = L.map("map", {
-    center: [lat, lng],
-    zoom: 15,
-    zoomControl: true,
-    attributionControl: false
-  });
+const STREETS = [
+  [{ lat: 6.51, lng: 3.37 }, { lat: 6.43, lng: 3.43 }],
+  [{ lat: 6.50, lng: 3.365 }, { lat: 6.45, lng: 3.44 }],
+  [{ lat: 6.515, lng: 3.39 }, { lat: 6.425, lng: 3.39 }],
+  [{ lat: 6.515, lng: 3.41 }, { lat: 6.425, lng: 3.41 }],
+  [{ lat: 6.48, lng: 3.365 }, { lat: 6.48, lng: 3.44 }],
+  [{ lat: 6.46, lng: 3.365 }, { lat: 6.46, lng: 3.44 }],
+  [{ lat: 6.44, lng: 3.365 }, { lat: 6.44, lng: 3.44 }],
+];
 
-  // Dark tile layer
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-    maxZoom: 19
-  }).addTo(map);
+const STATUS_CONFIG = {
+  PICKUP_EN_ROUTE: { icon: "◎", label: "En Route", color: "#3b82f6" },
+  PICKED_UP:       { icon: "◉", label: "Picked Up", color: "#8b5cf6" },
+  DELIVERING:      { icon: "→", label: "Delivering", color: "#f59e0b" },
+  ARRIVING:        { icon: "◈", label: "Arriving", color: "#ef4444" },
+  DELIVERED:       { icon: "★", label: "Delivered", color: "#22c55e" },
+  DEFAULT:         { icon: "◎", label: "Awaiting", color: "#38bdf8" },
+};
 
-  // Driver marker with pulsing dot
-  const icon = L.divIcon({
-    className: "",
-    html: '<div class="driver-pulse"><div class="driver-dot"></div></div>',
-    iconSize: [40, 40],
-    iconAnchor: [20, 20]
-  });
-  driverMarker = L.marker([lat, lng], { icon }).addTo(map);
+// ─── Canvas Map ───
+let demoProgress = 0;
+let demoAnimId = null;
+let demoStartTime = null;
+const DEMO_DURATION = 18000;
+let liveTrail = []; // for live GPS mode
 
-  // Trail line
-  trailCoords = [[lat, lng]];
-  trailLine = L.polyline(trailCoords, {
-    color: "#38bdf8",
-    weight: 3,
-    opacity: 0.4,
-    dashArray: "6, 8"
-  }).addTo(map);
+function lerp(a, b, t) {
+  return { lat: a.lat + (b.lat - a.lat) * t, lng: a.lng + (b.lng - a.lng) * t };
 }
 
-function moveDriver(lat, lng) {
-  if (!map) return;
-  driverMarker.setLatLng([lat, lng]);
-  map.panTo([lat, lng], { animate: true, duration: 0.8 });
-  trailCoords.push([lat, lng]);
-  if (trailCoords.length > 200) trailCoords.shift();
-  trailLine.setLatLngs(trailCoords);
+function getDriverPos(p) {
+  const segs = ROUTE_POINTS.length - 1;
+  const seg = Math.min(Math.floor(p * segs), segs - 1);
+  const t = (p * segs) - seg;
+  return lerp(ROUTE_POINTS[seg], ROUTE_POINTS[Math.min(seg + 1, segs)], t);
 }
 
-// ─── Demo Simulation ───
+function drawMap(progress, trail) {
+  const canvas = document.getElementById("map-canvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const W = canvas.width = canvas.offsetWidth * 2;
+  const H = canvas.height = canvas.offsetHeight * 2;
+  ctx.scale(2, 2);
+  const w = W / 2, h = H / 2;
+
+  // Determine bounds
+  let points, driverPos, driverIdx;
+  const isLive = trail && trail.length > 0;
+
+  if (isLive) {
+    points = trail;
+    const pad = 0.002;
+    let minLat = Infinity, maxLat = -Infinity, minLng = Infinity, maxLng = -Infinity;
+    points.forEach(p => {
+      if (p.lat < minLat) minLat = p.lat; if (p.lat > maxLat) maxLat = p.lat;
+      if (p.lng < minLng) minLng = p.lng; if (p.lng > maxLng) maxLng = p.lng;
+    });
+    // Ensure minimum zoom
+    if (maxLat - minLat < 0.005) { minLat -= 0.003; maxLat += 0.003; }
+    if (maxLng - minLng < 0.005) { minLng -= 0.003; maxLng += 0.003; }
+    minLat -= pad; maxLat += pad; minLng -= pad; maxLng += pad;
+    var toX = lng => ((lng - minLng) / (maxLng - minLng)) * w;
+    var toY = lat => h - ((lat - minLat) / (maxLat - minLat)) * h;
+    driverPos = points[points.length - 1];
+    driverIdx = points.length - 1;
+  } else {
+    points = ROUTE_POINTS;
+    const minLat = 6.425, maxLat = 6.515, minLng = 3.365, maxLng = 3.44;
+    var toX = lng => ((lng - minLng) / (maxLng - minLng)) * w;
+    var toY = lat => h - ((lat - minLat) / (maxLat - minLat)) * h;
+    driverPos = getDriverPos(progress);
+    driverIdx = Math.floor(progress * (points.length - 1));
+  }
+
+  // Background
+  ctx.fillStyle = "#0a0f1a";
+  ctx.fillRect(0, 0, w, h);
+
+  // Grid
+  ctx.strokeStyle = "rgba(56, 189, 248, 0.04)";
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i < 20; i++) {
+    ctx.beginPath(); ctx.moveTo(i * w / 20, 0); ctx.lineTo(i * w / 20, h); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, i * h / 20); ctx.lineTo(w, i * h / 20); ctx.stroke();
+  }
+
+  // Streets (only for demo mode)
+  if (!isLive) {
+    ctx.strokeStyle = "rgba(56, 189, 248, 0.08)";
+    ctx.lineWidth = 1;
+    STREETS.forEach(([a, b]) => {
+      ctx.beginPath(); ctx.moveTo(toX(a.lng), toY(a.lat));
+      ctx.lineTo(toX(b.lng), toY(b.lat)); ctx.stroke();
+    });
+  }
+
+  // Full route path (dashed)
+  ctx.strokeStyle = "rgba(56, 189, 248, 0.15)";
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  points.forEach((p, i) => {
+    i === 0 ? ctx.moveTo(toX(p.lng), toY(p.lat)) : ctx.lineTo(toX(p.lng), toY(p.lat));
+  });
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Traveled path (glowing solid)
+  ctx.strokeStyle = "#38bdf8";
+  ctx.lineWidth = 3;
+  ctx.shadowColor = "#38bdf8";
+  ctx.shadowBlur = 8;
+  ctx.beginPath();
+  if (isLive) {
+    points.forEach((p, i) => {
+      i === 0 ? ctx.moveTo(toX(p.lng), toY(p.lat)) : ctx.lineTo(toX(p.lng), toY(p.lat));
+    });
+  } else {
+    for (let i = 0; i <= driverIdx && i < points.length; i++) {
+      const p = points[i];
+      i === 0 ? ctx.moveTo(toX(p.lng), toY(p.lat)) : ctx.lineTo(toX(p.lng), toY(p.lat));
+    }
+    ctx.lineTo(toX(driverPos.lng), toY(driverPos.lat));
+  }
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Pickup marker (green)
+  const origin = isLive ? points[0] : ROUTE_POINTS[0];
+  const ox = toX(origin.lng), oy = toY(origin.lat);
+  ctx.fillStyle = "#22c55e";
+  ctx.beginPath(); ctx.arc(ox, oy, 6, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = "#0a0f1a";
+  ctx.beginPath(); ctx.arc(ox, oy, 3, 0, Math.PI * 2); ctx.fill();
+
+  // Dropoff marker (red)
+  const dest = isLive ? points[points.length - 1] : ROUTE_POINTS[ROUTE_POINTS.length - 1];
+  if (!isLive || points.length > 1) {
+    const endPt = isLive ? points[0] : ROUTE_POINTS[ROUTE_POINTS.length - 1]; // For live, show start as green
+    const dx = toX(ROUTE_POINTS[ROUTE_POINTS.length - 1].lng);
+    const dy = toY(ROUTE_POINTS[ROUTE_POINTS.length - 1].lat);
+    if (!isLive) {
+      ctx.fillStyle = "#ef4444";
+      ctx.beginPath(); ctx.arc(dx, dy, 6, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#0a0f1a";
+      ctx.beginPath(); ctx.arc(dx, dy, 3, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  // Labels
+  ctx.font = "600 9px 'DM Sans', sans-serif";
+  ctx.shadowBlur = 0;
+  if (!isLive) {
+    ctx.fillStyle = "rgba(56, 189, 248, 0.6)";
+    ctx.fillText("PICKUP", ox + 10, oy - 8);
+    const dx2 = toX(ROUTE_POINTS[ROUTE_POINTS.length - 1].lng);
+    const dy2 = toY(ROUTE_POINTS[ROUTE_POINTS.length - 1].lat);
+    ctx.fillStyle = "rgba(239, 68, 68, 0.6)";
+    ctx.fillText("DROP-OFF", dx2 + 10, dy2 - 8);
+  }
+
+  // Driver dot (pulsing)
+  const px = toX(driverPos.lng), py = toY(driverPos.lat);
+  const pulse = 0.5 + 0.5 * Math.sin(Date.now() / 300);
+  ctx.fillStyle = `rgba(56, 189, 248, ${0.15 + pulse * 0.1})`;
+  ctx.beginPath(); ctx.arc(px, py, 14 + pulse * 4, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = "#38bdf8";
+  ctx.shadowColor = "#38bdf8";
+  ctx.shadowBlur = 12;
+  ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = "#fff";
+  ctx.shadowBlur = 0;
+  ctx.beginPath(); ctx.arc(px, py, 2.5, 0, Math.PI * 2); ctx.fill();
+}
+
+// ─── Demo Animation ───
 let demoInterval = null;
-let demoLat = 40.748817;
-let demoLng = -73.985428;
 
-function startDemoSimulation() {
-  addLog("Demo mode — simulated GPS data");
-  addLog("Connect your API key to use real deliveries");
+function startDemoAnimation() {
+  demoStartTime = null;
+  demoProgress = 0;
 
-  demoInterval = setInterval(() => {
-    demoLat += (Math.random() - 0.48) * 0.0005;
-    demoLng += (Math.random() - 0.48) * 0.0005;
-    const speed = (25 + Math.random() * 20).toFixed(0);
-    const heading = Math.floor(Math.random() * 360);
+  function animate(ts) {
+    if (!demoStartTime) demoStartTime = ts;
+    demoProgress = Math.min((ts - demoStartTime) / DEMO_DURATION, 1);
 
-    moveDriver(demoLat, demoLng);
-    document.getElementById("stat-speed").textContent = `${speed} km/h`;
-    document.getElementById("stat-heading").textContent = `${heading}°`;
-  }, 3000);
+    drawMap(demoProgress, null);
+    updateDemoStats();
+
+    if (demoProgress < 1) {
+      demoAnimId = requestAnimationFrame(animate);
+    } else {
+      setTimeout(() => {
+        demoStartTime = null;
+        demoProgress = 0;
+        demoAnimId = requestAnimationFrame(animate);
+      }, 2500);
+    }
+  }
+  demoAnimId = requestAnimationFrame(animate);
 }
 
-function stopDemoSimulation() {
-  if (demoInterval) { clearInterval(demoInterval); demoInterval = null; }
+function stopDemoAnimation() {
+  if (demoAnimId) { cancelAnimationFrame(demoAnimId); demoAnimId = null; }
+}
+
+function updateDemoStats() {
+  const eta = Math.max(0, Math.ceil((1 - demoProgress) * 14));
+  const dist = (demoProgress * 8.2).toFixed(1);
+  const speed = demoProgress > 0 && demoProgress < 1 ? "32" : "0";
+
+  document.getElementById("stat-eta").textContent = `${eta} min`;
+  document.getElementById("stat-dist").textContent = `${dist} km`;
+  document.getElementById("stat-speed").textContent = `${speed} km/h`;
+  document.getElementById("progress-fill").style.width = `${demoProgress * 100}%`;
+
+  // Update status based on progress
+  let statusKey = "DEFAULT";
+  if (demoProgress < 0.2) statusKey = "PICKUP_EN_ROUTE";
+  else if (demoProgress < 0.3) statusKey = "PICKED_UP";
+  else if (demoProgress < 0.85) statusKey = "DELIVERING";
+  else if (demoProgress < 0.95) statusKey = "ARRIVING";
+  else statusKey = "DELIVERED";
+
+  const cfg = STATUS_CONFIG[statusKey];
+  const el = document.getElementById("widget-status");
+  el.style.background = cfg.color + "18";
+  el.style.borderColor = cfg.color + "30";
+  el.style.color = cfg.color;
+  document.getElementById("widget-status-text").textContent = cfg.label;
 }
 
 // ─── Connect Modal ───
@@ -644,7 +824,6 @@ function showConnectModal() {
   document.getElementById("key-input").focus();
   document.getElementById("auth-error").classList.add("hidden");
 }
-
 function hideConnectModal() {
   document.getElementById("connect-modal").classList.add("hidden");
 }
@@ -656,16 +835,13 @@ function authenticate() {
     showError("auth-error", "Key must start with tk_test_ or tk_live_");
     return;
   }
-
-  fetch(`${API}/v1/tenants/me`, {
-    headers: { Authorization: `Bearer ${apiKey}` }
-  })
+  fetch(`${API}/v1/tenants/me`, { headers: { Authorization: `Bearer ${apiKey}` } })
     .then(r => { if (!r.ok) throw new Error(); return r.json(); })
     .then(() => {
       connected = true;
       localStorage.setItem("tk_driver_key", apiKey);
       hideConnectModal();
-      stopDemoSimulation();
+      stopDemoAnimation();
       switchToLiveMode();
       addLog("Connected to TrackKit API", "status");
       loadDeliveries();
@@ -675,10 +851,7 @@ function authenticate() {
 
 function logout() {
   stopTracking();
-  connected = false;
-  apiKey = "";
-  deliveries = [];
-  selectedId = "";
+  connected = false; apiKey = ""; deliveries = []; selectedId = "";
   localStorage.removeItem("tk_driver_key");
   switchToDemoMode();
   clearLog();
@@ -690,13 +863,12 @@ function switchToLiveMode() {
   document.getElementById("demo-badge").classList.add("hidden");
   document.getElementById("connect-header-btn").classList.add("hidden");
   document.getElementById("logout-btn").classList.remove("hidden");
-
-  document.getElementById("stat-speed").textContent = "--";
-  document.getElementById("stat-heading").textContent = "--";
-
-  // Reset trail
-  trailCoords = [];
-  if (trailLine) trailLine.setLatLngs([]);
+  liveTrail = [];
+  document.getElementById("stat-eta").textContent = "-- min";
+  document.getElementById("stat-dist").textContent = "-- km";
+  document.getElementById("stat-speed").textContent = "-- km/h";
+  document.getElementById("progress-fill").style.width = "0%";
+  drawMap(0, null); // Clear
 }
 
 function switchToDemoMode() {
@@ -705,45 +877,30 @@ function switchToDemoMode() {
   document.getElementById("connect-header-btn").classList.remove("hidden");
   document.getElementById("logout-btn").classList.add("hidden");
   document.getElementById("live-badge").classList.add("hidden");
-
-  // Reset map to demo position
-  demoLat = 40.748817;
-  demoLng = -73.985428;
-  if (map) {
-    moveDriver(demoLat, demoLng);
-    trailCoords = [[demoLat, demoLng]];
-    trailLine.setLatLngs(trailCoords);
-  }
+  liveTrail = [];
 }
 
 // ─── Load Deliveries ───
 async function loadDeliveries() {
   if (!connected) return;
   deliveries = [];
-  const active = ["CONFIRMED", "DRIVER_ASSIGNED", "PICKUP_EN_ROUTE", "PICKED_UP", "DELIVERING", "ARRIVING"];
-
-  for (const status of active) {
+  for (const status of ["CONFIRMED","DRIVER_ASSIGNED","PICKUP_EN_ROUTE","PICKED_UP","DELIVERING","ARRIVING"]) {
     try {
-      const r = await fetch(`${API}/v1/deliveries?status=${status}`, {
-        headers: { Authorization: `Bearer ${apiKey}` }
-      });
+      const r = await fetch(`${API}/v1/deliveries?status=${status}`, { headers: { Authorization: `Bearer ${apiKey}` } });
       const data = await r.json();
       if (data.data) deliveries.push(...data.data);
     } catch {}
   }
-
   renderDeliveries();
 }
 
 function renderDeliveries() {
   const el = document.getElementById("delivery-list");
   const list = connected ? deliveries : DEMO_DELIVERIES;
-
   if (list.length === 0) {
     el.innerHTML = '<div style="padding: 20px; border-radius: 12px; text-align: center; background: rgba(12, 18, 34, 0.5); border: 1px solid rgba(56, 189, 248, 0.06); font-size: 12px; color: rgba(148, 163, 184, 0.35); margin-bottom: 16px;">No active deliveries. Create one in the <a href="https://track-kit.vercel.app/dashboard/deliveries" target="_blank" style="color: #38bdf8;">dashboard</a> first.</div>';
     return;
   }
-
   el.innerHTML = '<div class="delivery-list">' + list.map(d => `
     <button class="delivery-item ${d.id === selectedId ? 'active' : ''}" onclick="selectDelivery('${d.id}')">
       <div class="delivery-item-top">
@@ -761,6 +918,22 @@ function renderDeliveries() {
 
 function selectDelivery(id) {
   selectedId = id;
+  const list = connected ? deliveries : DEMO_DELIVERIES;
+  const d = list.find(x => x.id === id);
+  if (d) {
+    document.getElementById("widget-title").textContent = `Order #${d.trackingCode}`;
+    const from = (d.pickupAddress || "Pickup").split(",")[0];
+    const to = (d.dropoffAddress || "Dropoff").split(",")[0];
+    document.getElementById("widget-sub").textContent = `${from} → ${to}`;
+    document.getElementById("progress-from").textContent = from;
+    document.getElementById("progress-to").textContent = to;
+    const cfg = STATUS_CONFIG[d.status] || STATUS_CONFIG.DEFAULT;
+    const el = document.getElementById("widget-status");
+    el.style.background = cfg.color + "18";
+    el.style.borderColor = cfg.color + "30";
+    el.style.color = cfg.color;
+    document.getElementById("widget-status-text").textContent = cfg.label;
+  }
   renderDeliveries();
   renderStatusButtons();
   document.getElementById("track-btn").disabled = false;
@@ -771,7 +944,6 @@ function renderStatusButtons() {
   const list = connected ? deliveries : DEMO_DELIVERIES;
   const delivery = list.find(d => d.id === selectedId);
   if (!delivery) return;
-
   container.innerHTML = STATUSES.map(s =>
     `<button class="status-btn ${delivery.status === s ? 'active' : ''}" onclick="updateStatus('${s}')">${s.replace(/_/g, " ")}</button>`
   ).join("");
@@ -780,79 +952,51 @@ function renderStatusButtons() {
 // ─── Status Update ───
 async function updateStatus(status) {
   if (!connected) {
-    // Demo mode: simulate locally
     const d = DEMO_DELIVERIES.find(d => d.id === selectedId);
-    if (d) {
-      d.status = status;
-      addLog(`Status → ${status} (demo)`, "status");
-      renderDeliveries();
-      selectDelivery(selectedId);
-    }
+    if (d) { d.status = status; addLog(`Status → ${status} (demo)`, "status"); renderDeliveries(); selectDelivery(selectedId); }
     return;
   }
-
   try {
     const r = await fetch(`${API}/v1/deliveries/${selectedId}/status`, {
       method: "PATCH",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({ status })
     });
-    if (r.ok) {
-      addLog(`Status → ${status}`, "status");
-      await loadDeliveries();
-      selectDelivery(selectedId);
-    } else {
-      const err = await r.json();
-      addLog(`Status error: ${err.message || err.error}`, "error");
-    }
+    if (r.ok) { addLog(`Status → ${status}`, "status"); await loadDeliveries(); selectDelivery(selectedId); }
+    else { const err = await r.json(); addLog(`Status error: ${err.message || err.error}`, "error"); }
   } catch { addLog("Failed to update status", "error"); }
 }
 
 // ─── GPS Tracking ───
-function toggleTracking() {
-  tracking ? stopTracking() : startTracking();
-}
+function toggleTracking() { tracking ? stopTracking() : startTracking(); }
 
 function startTracking() {
   if (!selectedId) return;
 
   if (!connected) {
-    // Demo mode: simulate tracking
-    tracking = true;
-    sendCount = 0;
+    tracking = true; sendCount = 0;
     updateTrackingUI();
     addLog("Simulated GPS tracking started (demo)");
-
-    intervalId = setInterval(() => {
-      sendCount++;
-      demoLat += (Math.random() - 0.48) * 0.0005;
-      demoLng += (Math.random() - 0.48) * 0.0005;
-      moveDriver(demoLat, demoLng);
-      const speed = (25 + Math.random() * 20).toFixed(0);
-      document.getElementById("stat-speed").textContent = `${speed} km/h`;
-      document.getElementById("stat-heading").textContent = `${Math.floor(Math.random() * 360)}°`;
-      addLog(`Sent: ${demoLat.toFixed(6)}, ${demoLng.toFixed(6)} · ${speed} km/h (demo)`);
-      updateTrackingUI();
-    }, 5000);
+    // Demo mode: just animate canvas faster
     return;
   }
 
   if (!navigator.geolocation) { addLog("Geolocation not supported", "error"); return; }
-
-  tracking = true;
-  sendCount = 0;
+  tracking = true; sendCount = 0; liveTrail = [];
   updateTrackingUI();
   addLog("GPS tracking started...");
 
   watchId = navigator.geolocation.watchPosition(
     pos => {
       currentPos = {
-        lat: pos.coords.latitude,
-        lng: pos.coords.longitude,
+        lat: pos.coords.latitude, lng: pos.coords.longitude,
         speed: pos.coords.speed ? pos.coords.speed * 3.6 : 0,
         heading: pos.coords.heading || 0
       };
-      updateGPSDisplay();
+      liveTrail.push({ lat: currentPos.lat, lng: currentPos.lng });
+      if (liveTrail.length > 200) liveTrail.shift();
+      drawMap(0, liveTrail);
+      document.getElementById("stat-speed").textContent = `${currentPos.speed.toFixed(0)} km/h`;
     },
     err => addLog(`GPS: ${err.message}`, "error"),
     { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
@@ -870,48 +1014,26 @@ function stopTracking() {
   addLog("Tracking stopped");
 }
 
-// ─── Send Location to API ───
 async function sendLocation() {
   if (!currentPos || !selectedId) return;
-
   try {
     const r = await fetch(`${API}/v1/deliveries/${selectedId}/location`, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        lat: currentPos.lat,
-        lng: currentPos.lng,
-        speed: currentPos.speed,
-        heading: currentPos.heading
-      })
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ lat: currentPos.lat, lng: currentPos.lng, speed: currentPos.speed, heading: currentPos.heading })
     });
-
     if (r.ok) {
       sendCount++;
       addLog(`Sent: ${currentPos.lat.toFixed(6)}, ${currentPos.lng.toFixed(6)} · ${currentPos.speed.toFixed(0)} km/h`);
       updateTrackingUI();
-    } else {
-      const err = await r.json();
-      addLog(`API: ${err.error || r.status}`, "error");
-    }
+    } else { const err = await r.json(); addLog(`API: ${err.error || r.status}`, "error"); }
   } catch { addLog("Network error", "error"); }
 }
 
 // ─── UI Updates ───
-function updateGPSDisplay() {
-  if (!currentPos) return;
-  moveDriver(currentPos.lat, currentPos.lng);
-  document.getElementById("stat-speed").textContent = `${currentPos.speed.toFixed(0)} km/h`;
-  document.getElementById("stat-heading").textContent = currentPos.heading ? `${currentPos.heading.toFixed(0)}°` : "--";
-}
-
 function updateTrackingUI() {
   const btn = document.getElementById("track-btn");
   const badge = document.getElementById("live-badge");
-
   if (tracking) {
     btn.className = "track-btn stop";
     btn.textContent = `■  Stop Tracking  (${sendCount} sent)`;
@@ -932,57 +1054,42 @@ function addLog(msg, type = "") {
   box.prepend(entry);
   while (box.children.length > 50) box.lastChild.remove();
 }
-
-function clearLog() {
-  document.getElementById("log-box").innerHTML = "";
-}
-
+function clearLog() { document.getElementById("log-box").innerHTML = ""; }
 function showError(id, msg) {
   const el = document.getElementById(id);
-  el.textContent = msg;
-  el.classList.remove("hidden");
+  el.textContent = msg; el.classList.remove("hidden");
 }
 
 // ─── Init ───
 function initDemo() {
   renderDeliveries();
   renderStatusButtons();
-
+  document.getElementById("widget-title").textContent = "Order #TK-8294XR";
+  document.getElementById("widget-sub").textContent = "Yaba Tech → Victoria Island";
+  document.getElementById("progress-from").textContent = "Yaba Tech";
+  document.getElementById("progress-to").textContent = "Victoria Island";
   addLog("Demo mode — click around to explore the UI");
   addLog("Connect an API key to send real GPS data");
-
-  startDemoSimulation();
+  startDemoAnimation();
 }
 
 (function init() {
-  // Init map
-  initMap(demoLat, demoLng);
-
   document.getElementById("key-input").addEventListener("keydown", e => {
     if (e.key === "Enter") authenticate();
   });
 
-  // Check for saved key
   const saved = localStorage.getItem("tk_driver_key");
   if (saved) {
     apiKey = saved;
     document.getElementById("key-input").value = saved;
-
-    // Auto-connect with saved key
-    fetch(`${API}/v1/tenants/me`, {
-      headers: { Authorization: `Bearer ${saved}` }
-    })
+    fetch(`${API}/v1/tenants/me`, { headers: { Authorization: `Bearer ${saved}` } })
       .then(r => { if (!r.ok) throw new Error(); return r.json(); })
       .then(() => {
-        connected = true;
-        switchToLiveMode();
+        connected = true; switchToLiveMode();
         addLog("Connected with saved API key", "status");
         loadDeliveries();
       })
-      .catch(() => {
-        localStorage.removeItem("tk_driver_key");
-        initDemo();
-      });
+      .catch(() => { localStorage.removeItem("tk_driver_key"); initDemo(); });
   } else {
     initDemo();
   }

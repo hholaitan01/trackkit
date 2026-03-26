@@ -174,6 +174,17 @@ export async function deliveryRoutes(app: FastifyInstance) {
       });
     }
 
+    // Fetch current delivery to get previous status
+    const existing = await db.delivery.findFirst({
+      where: { id, tenantId: tenant.id },
+    });
+
+    if (!existing) {
+      return reply.status(404).send({ error: "not_found" });
+    }
+
+    const previousStatus = existing.status;
+
     const timestamps: Record<string, any> = {};
     if (status === "PICKED_UP") timestamps.pickedUpAt = new Date();
     if (status === "DELIVERED") timestamps.deliveredAt = new Date();
@@ -195,7 +206,7 @@ export async function deliveryRoutes(app: FastifyInstance) {
       id: delivery.id,
       trackingCode: delivery.trackingCode,
       status: delivery.status,
-      previousStatus: status, // TODO: track previous
+      previousStatus,
     });
 
     return delivery;

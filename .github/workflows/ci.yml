@@ -23,6 +23,8 @@ jobs:
         working-directory: apps/api
       - run: npx tsc --noEmit
         working-directory: apps/api
+      - run: npm test
+        working-directory: apps/api
 
   pages:
     name: Pages — Build

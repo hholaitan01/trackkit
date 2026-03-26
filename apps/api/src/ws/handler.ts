@@ -1,5 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { WebSocket } from "ws";
+import { db } from "../lib/db";
 
 // ─── In-memory subscriber map ───
 // Key: trackingCode, Value: Set of WebSocket connections
@@ -53,17 +54,46 @@ export async function wsHandler(app: FastifyInstance) {
 
   // Driver sends location updates via WebSocket (alternative to REST)
   // ws://api.trackkit.dev/ws/driver?key=tk_live_xxx
-  app.get("/driver", { websocket: true }, (socket, request) => {
+  app.get("/driver", { websocket: true }, async (socket, request) => {
     const query = request.query as { key?: string };
 
-    // TODO: Validate API key from query param
-    // For now, accept all connections
+    // Validate API key from query param
+    if (!query.key) {
+      socket.send(JSON.stringify({ type: "error", message: "Missing API key. Connect with ?key=tk_live_xxx" }));
+      socket.close(4001, "Missing API key");
+      return;
+    }
+
+    const keyRecord = await db.apiKey.findUnique({
+      where: { key: query.key },
+      include: { tenant: true },
+    });
+
+    if (!keyRecord) {
+      socket.send(JSON.stringify({ type: "error", message: "Invalid API key" }));
+      socket.close(4001, "Invalid API key");
+      return;
+    }
+
+    const tenantId = keyRecord.tenant.id;
+    app.log.info(`Driver WS connected for tenant: ${keyRecord.tenant.name}`);
+
+    socket.send(JSON.stringify({ type: "connected", message: "Driver WebSocket authenticated" }));
 
     socket.on("message", (raw) => {
       try {
         const msg = JSON.parse(raw.toString());
 
         if (msg.type === "location" && msg.trackingCode) {
+          // Verify delivery belongs to this tenant before broadcasting
+          const delivery = await db.delivery.findFirst({
+            where: { trackingCode: msg.trackingCode, tenantId },
+          });
+          if (!delivery) {
+            socket.send(JSON.stringify({ type: "error", message: "Delivery not found or not yours" }));
+            return;
+          }
+
           // Broadcast to all subscribers of this delivery
           broadcastLocationUpdate(msg.trackingCode, {
             lat: msg.lat,

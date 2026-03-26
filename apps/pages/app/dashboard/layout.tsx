@@ -7,6 +7,7 @@ import Link from "next/link";
 
 const nav = [
   { href: "/dashboard", label: "Overview", icon: "◎" },
+  { href: "/dashboard/analytics", label: "Analytics", icon: "◆" },
   { href: "/dashboard/deliveries", label: "Deliveries", icon: "◇" },
   { href: "/dashboard/drivers", label: "Drivers", icon: "◉" },
   { href: "/dashboard/keys", label: "API Keys", icon: "⚿" },
