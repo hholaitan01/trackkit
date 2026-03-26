@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>TrackKit Driver Demo</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -126,29 +128,49 @@
     }
     .error { font-size: 12px; color: #ef4444; margin-top: 8px; text-align: center; }
 
-    /* ─── GPS Card ─── */
-    .gps-card {
-      padding: 16px; border-radius: 14px; margin-bottom: 16px;
-      background: rgba(12, 18, 34, 0.6); border: 1px solid rgba(56, 189, 248, 0.08);
+    /* ─── Map ─── */
+    .map-container {
+      position: relative; border-radius: 14px; overflow: hidden;
+      margin-bottom: 16px; border: 1px solid rgba(56, 189, 248, 0.08);
     }
-    .gps-header {
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
+    #map { height: 260px; width: 100%; background: #0a0e18; }
+    .map-overlay {
+      position: absolute; bottom: 10px; left: 10px; z-index: 1000;
+      display: flex; gap: 8px;
     }
-    .gps-header span:first-child {
-      font-size: 11px; font-weight: 700; color: rgba(148, 163, 184, 0.5); letter-spacing: 0.05em;
+    .map-stat {
+      padding: 6px 10px; border-radius: 8px;
+      background: rgba(6, 10, 20, 0.85); backdrop-filter: blur(8px);
+      border: 1px solid rgba(56, 189, 248, 0.12);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; font-weight: 700; color: #f0f9ff;
     }
-    .gps-fix { font-size: 10px; color: rgba(34, 197, 94, 0.7); font-weight: 600; }
-    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .stat-label {
-      font-size: 9px; font-weight: 700; color: rgba(148, 163, 184, 0.4);
-      letter-spacing: 0.06em; margin-bottom: 2px;
+    .map-stat .map-stat-label {
+      font-size: 8px; font-weight: 700; color: rgba(148, 163, 184, 0.4);
+      letter-spacing: 0.06em; display: block; margin-bottom: 1px;
     }
-    .stat-value {
-      font-size: 15px; font-weight: 800; letter-spacing: -0.01em; color: #f0f9ff;
-      font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums;
+    .map-stat.accent { color: #38bdf8; }
+    .leaflet-control-attribution { display: none !important; }
+    .leaflet-control-zoom { border: none !important; }
+    .leaflet-control-zoom a {
+      background: rgba(6, 10, 20, 0.85) !important; color: #94a3b8 !important;
+      border: 1px solid rgba(56, 189, 248, 0.12) !important;
+      backdrop-filter: blur(8px);
     }
-    .stat-value.accent { color: #38bdf8; }
-    .stat-value.demo { color: rgba(240, 249, 255, 0.4); }
+    .leaflet-control-zoom a:hover { color: #f0f9ff !important; }
+    .driver-pulse {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(56, 189, 248, 0.15);
+      border: 2px solid #38bdf8;
+      animation: pulse 2s infinite;
+    }
+    .driver-dot {
+      width: 14px; height: 14px; border-radius: 50%;
+      background: #38bdf8; border: 3px solid #060a14;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
 
     /* ─── Delivery Selector ─── */
     .section-header {
@@ -314,17 +336,18 @@
 
 <!-- ═══════════════════ Main App UI ═══════════════════ -->
 <div class="content">
-  <!-- GPS Card -->
-  <div class="gps-card">
-    <div class="gps-header">
-      <span>GPS POSITION</span>
-      <span id="gps-fix" class="gps-fix hidden">FIX OK</span>
-    </div>
-    <div id="gps-stats" class="stats-grid">
-      <div><div class="stat-label">LAT</div><div id="stat-lat" class="stat-value demo">40.748817</div></div>
-      <div><div class="stat-label">LNG</div><div id="stat-lng" class="stat-value demo">-73.985428</div></div>
-      <div><div class="stat-label">SPEED</div><div id="stat-speed" class="stat-value demo">32 km/h</div></div>
-      <div><div class="stat-label">HEADING</div><div id="stat-heading" class="stat-value demo">127°</div></div>
+  <!-- Map -->
+  <div class="map-container">
+    <div id="map"></div>
+    <div class="map-overlay">
+      <div class="map-stat accent">
+        <span class="map-stat-label">SPEED</span>
+        <span id="stat-speed">32 km/h</span>
+      </div>
+      <div class="map-stat">
+        <span class="map-stat-label">HEADING</span>
+        <span id="stat-heading">127°</span>
+      </div>
     </div>
   </div>
 
@@ -489,6 +512,53 @@ const DEMO_DELIVERIES = [
   }
 ];
 
+// ─── Map Setup ───
+let map = null;
+let driverMarker = null;
+let trailLine = null;
+let trailCoords = [];
+
+function initMap(lat, lng) {
+  map = L.map("map", {
+    center: [lat, lng],
+    zoom: 15,
+    zoomControl: true,
+    attributionControl: false
+  });
+
+  // Dark tile layer
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+    maxZoom: 19
+  }).addTo(map);
+
+  // Driver marker with pulsing dot
+  const icon = L.divIcon({
+    className: "",
+    html: '<div class="driver-pulse"><div class="driver-dot"></div></div>',
+    iconSize: [40, 40],
+    iconAnchor: [20, 20]
+  });
+  driverMarker = L.marker([lat, lng], { icon }).addTo(map);
+
+  // Trail line
+  trailCoords = [[lat, lng]];
+  trailLine = L.polyline(trailCoords, {
+    color: "#38bdf8",
+    weight: 3,
+    opacity: 0.4,
+    dashArray: "6, 8"
+  }).addTo(map);
+}
+
+function moveDriver(lat, lng) {
+  if (!map) return;
+  driverMarker.setLatLng([lat, lng]);
+  map.panTo([lat, lng], { animate: true, duration: 0.8 });
+  trailCoords.push([lat, lng]);
+  if (trailCoords.length > 200) trailCoords.shift();
+  trailLine.setLatLngs(trailCoords);
+}
+
 // ─── Demo Simulation ───
 let demoInterval = null;
 let demoLat = 40.748817;
@@ -499,14 +569,12 @@ function startDemoSimulation() {
   addLog("Connect your API key to use real deliveries");
 
   demoInterval = setInterval(() => {
-    // Simulate small GPS movement
     demoLat += (Math.random() - 0.48) * 0.0005;
     demoLng += (Math.random() - 0.48) * 0.0005;
     const speed = (25 + Math.random() * 20).toFixed(0);
     const heading = Math.floor(Math.random() * 360);
 
-    document.getElementById("stat-lat").textContent = demoLat.toFixed(6);
-    document.getElementById("stat-lng").textContent = demoLng.toFixed(6);
+    moveDriver(demoLat, demoLng);
     document.getElementById("stat-speed").textContent = `${speed} km/h`;
     document.getElementById("stat-heading").textContent = `${heading}°`;
   }, 3000);
@@ -569,12 +637,12 @@ function switchToLiveMode() {
   document.getElementById("connect-header-btn").classList.add("hidden");
   document.getElementById("logout-btn").classList.remove("hidden");
 
-  // Reset GPS display for real data
-  document.querySelectorAll(".stat-value").forEach(el => el.classList.remove("demo"));
-  document.getElementById("stat-lat").textContent = "--";
-  document.getElementById("stat-lng").textContent = "--";
   document.getElementById("stat-speed").textContent = "--";
   document.getElementById("stat-heading").textContent = "--";
+
+  // Reset trail
+  trailCoords = [];
+  if (trailLine) trailLine.setLatLngs([]);
 }
 
 function switchToDemoMode() {
@@ -584,7 +652,14 @@ function switchToDemoMode() {
   document.getElementById("logout-btn").classList.add("hidden");
   document.getElementById("live-badge").classList.add("hidden");
 
-  document.querySelectorAll(".stat-value").forEach(el => el.classList.add("demo"));
+  // Reset map to demo position
+  demoLat = 40.748817;
+  demoLng = -73.985428;
+  if (map) {
+    moveDriver(demoLat, demoLng);
+    trailCoords = [[demoLat, demoLng]];
+    trailLine.setLatLngs(trailCoords);
+  }
 }
 
 // ─── Load Deliveries ───
@@ -698,7 +773,11 @@ function startTracking() {
       sendCount++;
       demoLat += (Math.random() - 0.48) * 0.0005;
       demoLng += (Math.random() - 0.48) * 0.0005;
-      addLog(`Sent: ${demoLat.toFixed(6)}, ${demoLng.toFixed(6)} · ${(25 + Math.random() * 20).toFixed(0)} km/h (demo)`);
+      moveDriver(demoLat, demoLng);
+      const speed = (25 + Math.random() * 20).toFixed(0);
+      document.getElementById("stat-speed").textContent = `${speed} km/h`;
+      document.getElementById("stat-heading").textContent = `${Math.floor(Math.random() * 360)}°`;
+      addLog(`Sent: ${demoLat.toFixed(6)}, ${demoLng.toFixed(6)} · ${speed} km/h (demo)`);
       updateTrackingUI();
     }, 5000);
     return;
@@ -770,9 +849,7 @@ async function sendLocation() {
 // ─── UI Updates ───
 function updateGPSDisplay() {
   if (!currentPos) return;
-  document.getElementById("gps-fix").classList.remove("hidden");
-  document.getElementById("stat-lat").textContent = currentPos.lat.toFixed(6);
-  document.getElementById("stat-lng").textContent = currentPos.lng.toFixed(6);
+  moveDriver(currentPos.lat, currentPos.lng);
   document.getElementById("stat-speed").textContent = `${currentPos.speed.toFixed(0)} km/h`;
   document.getElementById("stat-heading").textContent = currentPos.heading ? `${currentPos.heading.toFixed(0)}°` : "--";
 }
@@ -814,20 +891,19 @@ function showError(id, msg) {
 
 // ─── Init ───
 function initDemo() {
-  // Show demo deliveries
   renderDeliveries();
   renderStatusButtons();
 
-  // Show simulated log activity
   addLog("Demo mode — click around to explore the UI");
   addLog("Connect an API key to send real GPS data");
 
-  // Animate GPS values
   startDemoSimulation();
 }
 
 (function init() {
-  // Enter key on input
+  // Init map
+  initMap(demoLat, demoLng);
+
   document.getElementById("key-input").addEventListener("keydown", e => {
     if (e.key === "Enter") authenticate();
   });
