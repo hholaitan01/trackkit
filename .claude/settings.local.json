@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__claude_ai_Supabase__get_cost",
+      "mcp__claude_ai_Supabase__confirm_cost",
+      "mcp__claude_ai_Supabase__create_project",
+      "mcp__claude_ai_Supabase__apply_migration",
+      "mcp__claude_ai_Supabase__get_project_url",
+      "mcp__claude_ai_Supabase__execute_sql",
+      "mcp__claude_ai_Supabase__get_publishable_keys",
+      "Bash(npx vercel:*)",
+      "WebFetch(domain:trackkitapi-production.up.railway.app)",
+      "Bash(curl -s -X POST https://trackkitapi-production.up.railway.app/v1/auth/signup -H \"Content-Type: application/json\" -d '{\"\"name\"\": \"\"Test Company\"\"}')",
+      "Bash(npm publish:*)"
+    ]
+  }
+}

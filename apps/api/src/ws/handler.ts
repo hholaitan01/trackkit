@@ -80,7 +80,7 @@ export async function wsHandler(app: FastifyInstance) {
 
     socket.send(JSON.stringify({ type: "connected", message: "Driver WebSocket authenticated" }));
 
-    socket.on("message", (raw) => {
+    socket.on("message", async (raw) => {
       try {
         const msg = JSON.parse(raw.toString());
 
