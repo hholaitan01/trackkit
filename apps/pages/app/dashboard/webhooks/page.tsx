@@ -40,7 +40,34 @@ export default function WebhooksPage() {
         </button>
       </div>
 
-      <div className="bg-surface rounded-xl border border-white/5 overflow-hidden">
+      {/* Mobile card view */}
+      <div className="md:hidden space-y-3">
+        {loading ? (
+          <div className="p-8 text-center text-white/20 text-sm">Loading...</div>
+        ) : webhooks.length === 0 ? (
+          <div className="p-8 text-center text-white/20 text-sm">No webhooks configured</div>
+        ) : (
+          webhooks.map((w) => (
+            <div key={w.id} className="bg-surface rounded-xl border border-white/5 p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${w.isActive ? "bg-green-500/15 text-green-400" : "bg-white/5 text-white/30"}`}>
+                  {w.isActive ? "Active" : "Paused"}
+                </span>
+                <button onClick={() => deleteWebhook(w.id)} className="text-xs text-red-400/50 hover:text-red-400 transition">Delete</button>
+              </div>
+              <div className="font-mono text-xs text-white/50 break-all mb-2">{w.url}</div>
+              <div className="flex flex-wrap gap-1">
+                {(w.events || []).map((e: string) => (
+                  <span key={e} className="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-brand/8 text-brand/60">{e.split(".")[1]}</span>
+                ))}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Desktop table view */}
+      <div className="hidden md:block bg-surface rounded-xl border border-white/5 overflow-hidden">
         <div className="grid grid-cols-[1.5fr_1fr_80px_60px] px-5 py-3 text-[11px] font-semibold text-white/30 uppercase tracking-wide border-b border-white/5">
           <span>URL</span><span>Events</span><span>Status</span><span></span>
         </div>

@@ -57,7 +57,31 @@ export default function DeliveriesPage() {
         ))}
       </div>
 
-      <div className="bg-surface rounded-xl border border-white/5 overflow-hidden">
+      {/* Mobile card view */}
+      <div className="md:hidden space-y-3">
+        {loading ? (
+          <div className="p-8 text-center text-white/20 text-sm">Loading...</div>
+        ) : deliveries.length === 0 ? (
+          <div className="p-8 text-center text-white/20 text-sm">No deliveries found</div>
+        ) : (
+          deliveries.map((d) => (
+            <button key={d.id} onClick={() => setSelected(d)} className="w-full text-left bg-surface rounded-xl border border-white/5 p-4 hover:bg-white/[0.02] transition">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-mono text-xs text-brand/80">{d.trackingCode}</span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: `${STATUS_COLORS[d.status]}18`, color: STATUS_COLORS[d.status] }}>
+                  {d.status}
+                </span>
+              </div>
+              <div className="text-xs text-white/50 truncate">{d.pickupAddress}</div>
+              <div className="text-xs text-white/30 mt-0.5">→ {d.dropoffAddress}</div>
+              {d.currentEtaMinutes && <div className="text-xs text-white/40 mt-2">ETA: {d.currentEtaMinutes} min</div>}
+            </button>
+          ))
+        )}
+      </div>
+
+      {/* Desktop table view */}
+      <div className="hidden md:block bg-surface rounded-xl border border-white/5 overflow-hidden">
         <div className="grid grid-cols-[1fr_1.5fr_1.5fr_120px_100px_80px] px-5 py-3 text-[11px] font-semibold text-white/30 uppercase tracking-wide border-b border-white/5">
           <span>Code</span><span>Pickup</span><span>Dropoff</span><span>Status</span><span>ETA</span><span></span>
         </div>

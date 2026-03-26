@@ -25,7 +25,7 @@ export default function OverviewPage() {
     return (
       <div className="animate-pulse space-y-6">
         <div className="h-8 w-48 bg-white/5 rounded-lg" />
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="h-28 bg-white/5 rounded-xl" />
           ))}
@@ -42,7 +42,7 @@ export default function OverviewPage() {
     <div>
       <h1 className="text-xl font-extrabold tracking-tight mb-6">Dashboard</h1>
 
-      <div className="grid grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-8">
         <StatCard label="Active Deliveries" value={String(data.stats.activeDeliveries)} accent />
         <StatCard label="Total Deliveries" value={String(data.stats.totalDeliveries)} />
         <StatCard label="Live Connections" value={String(data.stats.liveConnections)} />
@@ -75,7 +75,7 @@ export default function OverviewPage() {
       </div>
 
       {/* Quick info */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-surface rounded-xl border border-white/5 p-5">
           <div className="text-sm font-bold mb-3">Account</div>
           <div className="space-y-2 text-sm">

@@ -465,29 +465,22 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
           }}>T</div>
           <span style={{ fontSize: 16, fontWeight: 800, letterSpacing: "-0.02em" }}>TrackKit</span>
         </div>
-        <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
-          {[
-            { label: "Features", href: "#features" },
-            { label: "Pricing", href: "#pricing" },
-          ].map(l => (
-            <a key={l.label} href={l.href} style={{
-              fontSize: 13, color: "rgba(148, 163, 184, 0.6)", textDecoration: "none",
-              fontWeight: 500, transition: "color 0.2s",
-            }}
-              onMouseEnter={e => (e.target as HTMLElement).style.color = "#f0f9ff"}
-              onMouseLeave={e => (e.target as HTMLElement).style.color = "rgba(148, 163, 184, 0.6)"}
-            >{l.label}</a>
-          ))}
-          <Link href="/docs" style={{
-            fontSize: 13, color: "rgba(148, 163, 184, 0.6)", textDecoration: "none",
-            fontWeight: 500, transition: "color 0.2s",
+        <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+          <a href="#features" className="hidden sm:inline" style={{
+            fontSize: 13, color: "rgba(148, 163, 184, 0.6)", textDecoration: "none", fontWeight: 500,
+          }}>Features</a>
+          <a href="#pricing" className="hidden sm:inline" style={{
+            fontSize: 13, color: "rgba(148, 163, 184, 0.6)", textDecoration: "none", fontWeight: 500,
+          }}>Pricing</a>
+          <Link href="/docs" className="hidden sm:inline" style={{
+            fontSize: 13, color: "rgba(148, 163, 184, 0.6)", textDecoration: "none", fontWeight: 500,
           }}>Docs</Link>
           <Link href={loggedInKey ? "/dashboard" : "/login"} style={{
             padding: "8px 18px", borderRadius: 8,
             border: "1px solid rgba(56, 189, 248, 0.25)",
             background: loggedInKey ? "rgba(56, 189, 248, 0.1)" : "transparent",
             color: "#38bdf8", fontSize: 12, fontWeight: 700,
-            textDecoration: "none", marginRight: -8,
+            textDecoration: "none",
           }}>{loggedInKey ? "Dashboard" : "Login"}</Link>
           <a href="https://github.com/hholaitan01/trackkit" target="_blank" rel="noopener noreferrer" style={{
             padding: "8px 18px", borderRadius: 8,
@@ -499,10 +492,7 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
       </nav>
 
       {/* Hero */}
-      <section style={{
-        padding: "80px 24px 60px", maxWidth: 1100, margin: "0 auto",
-        display: "grid", gridTemplateColumns: "1fr 420px", gap: 60, alignItems: "center",
-      }}>
+      <section className="max-w-[1100px] mx-auto px-6 pt-12 pb-10 md:pt-20 md:pb-16 grid grid-cols-1 md:grid-cols-[1fr_420px] gap-10 md:gap-16 items-center">
         <div>
           <div style={{
             display: "inline-flex", alignItems: "center", gap: 8,
@@ -514,7 +504,7 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
             Open Source · MIT Licensed
           </div>
 
-          <h1 style={{ fontSize: 48, fontWeight: 900, lineHeight: 1.08, letterSpacing: "-0.04em", margin: "0 0 20px" }}>
+          <h1 className="text-3xl md:text-5xl" style={{ fontWeight: 900, lineHeight: 1.08, letterSpacing: "-0.04em", margin: "0 0 20px" }}>
             Real-time delivery tracking.{" "}
             <span style={{
               background: "linear-gradient(135deg, #38bdf8, #0ea5e9, #38bdf8)",
@@ -523,7 +513,7 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
             }}>Zero Google Maps fees.</span>
           </h1>
 
-          <p style={{ fontSize: 17, lineHeight: 1.7, color: "rgba(148, 163, 184, 0.7)", margin: "0 0 36px", maxWidth: 480 }}>
+          <p className="text-sm md:text-base" style={{ lineHeight: 1.7, color: "rgba(148, 163, 184, 0.7)", margin: "0 0 36px", maxWidth: 480 }}>
             Drop-in tracking infrastructure for delivery and ride-sharing apps.
             Embeddable widget, REST API, real-time WebSockets.
             Built on OpenStreetMap. Pay 10× less than Google Maps.
@@ -546,21 +536,21 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
             }}>View Docs</Link>
           </div>
 
-          <div style={{ display: "flex", gap: 32, marginTop: 40 }}>
+          <div className="flex gap-6 md:gap-8 mt-8 md:mt-10">
             {[
               { n: "500", l: "Free deliveries/mo" },
               { n: "<50ms", l: "Location updates" },
               { n: "$0", l: "Maps API cost" },
             ].map(s => (
               <div key={s.l}>
-                <div style={{ fontSize: 22, fontWeight: 800, color: "#38bdf8", letterSpacing: "-0.02em" }}>{s.n}</div>
+                <div className="text-lg md:text-xl" style={{ fontWeight: 800, color: "#38bdf8", letterSpacing: "-0.02em" }}>{s.n}</div>
                 <div style={{ fontSize: 11, color: "rgba(148, 163, 184, 0.4)", fontWeight: 500, marginTop: 2 }}>{s.l}</div>
               </div>
             ))}
           </div>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "center" }}>
+        <div className="flex justify-center order-first md:order-last">
           <TrackingWidget isPlaying={demoPlaying} />
         </div>
       </section>
@@ -576,10 +566,10 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
       </div>
 
       {/* How it works */}
-      <section style={{ padding: "80px 24px", maxWidth: 1100, margin: "0 auto" }}>
+      <section className="px-6 py-12 md:py-20 max-w-[1100px] mx-auto">
         <div style={{ textAlign: "center", marginBottom: 48 }}>
-          <h2 style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-0.03em", margin: "0 0 12px" }}>Three lines of code. Live tracking.</h2>
-          <p style={{ fontSize: 15, color: "rgba(148, 163, 184, 0.5)", margin: 0 }}>Integrate in minutes, not months. Embed a widget, call an API, or both.</p>
+          <h2 className="text-xl md:text-3xl" style={{ fontWeight: 800, letterSpacing: "-0.03em", margin: "0 0 12px" }}>Three lines of code. Live tracking.</h2>
+          <p className="text-xs md:text-sm" style={{ color: "rgba(148, 163, 184, 0.5)", margin: 0 }}>Integrate in minutes, not months. Embed a widget, call an API, or both.</p>
         </div>
 
         <div style={{
@@ -603,14 +593,14 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
       </section>
 
       {/* Features */}
-      <section id="features" style={{ padding: "40px 24px 80px", maxWidth: 1100, margin: "0 auto" }}>
+      <section id="features" className="px-6 pt-6 pb-12 md:pt-10 md:pb-20 max-w-[1100px] mx-auto">
         <div style={{ textAlign: "center", marginBottom: 48 }}>
-          <h2 style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-0.03em", margin: "0 0 12px" }}>
+          <h2 className="text-xl md:text-3xl" style={{ fontWeight: 800, letterSpacing: "-0.03em", margin: "0 0 12px" }}>
             Everything you need. Nothing you don&apos;t.
           </h2>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <FeatureCard icon="◎" accent="#38bdf8" title="Real-Time Tracking" desc="Sub-50ms WebSocket location streaming. Customers see the driver move in real-time on the map." />
           <FeatureCard icon="⟨⟩" accent="#c084fc" title="Embeddable Widget" desc="Drop-in JavaScript widget. Works in React, Vue, vanilla HTML. 3 lines to integrate." />
           <FeatureCard icon="⚡" accent="#fbbf24" title="REST + WebSocket API" desc="Create deliveries, update locations, get ETAs. Full programmatic control." />
@@ -621,8 +611,8 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
       </section>
 
       {/* Comparison */}
-      <section style={{ padding: "60px 24px", borderTop: "1px solid rgba(56, 189, 248, 0.06)", maxWidth: 800, margin: "0 auto" }}>
-        <h2 style={{ fontSize: 28, fontWeight: 800, letterSpacing: "-0.03em", textAlign: "center", margin: "0 0 32px" }}>
+      <section className="px-6 py-10 md:py-16 max-w-[800px] mx-auto" style={{ borderTop: "1px solid rgba(56, 189, 248, 0.06)" }}>
+        <h2 className="text-xl md:text-3xl" style={{ fontWeight: 800, letterSpacing: "-0.03em", textAlign: "center", margin: "0 0 32px" }}>
           Google Maps vs TrackKit
         </h2>
         <div style={{
@@ -637,11 +627,8 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
             { label: "Setup time", google: "Weeks", tk: "Minutes" },
             { label: "Vendor lock-in", google: "Yes", tk: "Open source" },
           ].map((row, i) => (
-            <div key={i} style={{
-              display: "grid", gridTemplateColumns: "1fr 1fr 1fr",
-              padding: "14px 24px",
+            <div key={i} className="grid grid-cols-3 px-4 md:px-6 py-3 text-xs md:text-sm" style={{
               borderBottom: i < 5 ? "1px solid rgba(56, 189, 248, 0.06)" : "none",
-              fontSize: 13,
             }}>
               <span style={{ fontWeight: 600, color: "rgba(148, 163, 184, 0.7)" }}>{row.label}</span>
               <span style={{ color: "rgba(239, 68, 68, 0.6)", textAlign: "center" }}>{row.google}</span>
@@ -652,13 +639,13 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
       </section>
 
       {/* Pricing */}
-      <section id="pricing" style={{ padding: "80px 24px", maxWidth: 1000, margin: "0 auto" }}>
+      <section id="pricing" className="px-6 py-12 md:py-20 max-w-[1000px] mx-auto">
         <div style={{ textAlign: "center", marginBottom: 48 }}>
-          <h2 style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-0.03em", margin: "0 0 12px" }}>Simple, predictable pricing</h2>
-          <p style={{ fontSize: 15, color: "rgba(148, 163, 184, 0.5)", margin: 0 }}>Start free. Scale when you&apos;re ready.</p>
+          <h2 className="text-xl md:text-3xl" style={{ fontWeight: 800, letterSpacing: "-0.03em", margin: "0 0 12px" }}>Simple, predictable pricing</h2>
+          <p className="text-xs md:text-sm" style={{ color: "rgba(148, 163, 184, 0.5)", margin: 0 }}>Start free. Scale when you&apos;re ready.</p>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <PricingCard tier="Free" price="$0" features={["500 deliveries/mo", "Tracking widget", "REST API", "Community support"]} cta="Start Free" onCta={() => router.push("/signup")} />
           <PricingCard tier="Growth" price="$49" period="/mo" features={["5,000 deliveries/mo", "Custom branding", "Webhooks", "Email support"]} cta="Get Started" onCta={() => router.push("/signup")} />
           <PricingCard tier="Scale" price="$199" period="/mo" highlight features={["50,000 deliveries/mo", "Custom domain", "Priority support", "Analytics dashboard"]} cta="Get Started" onCta={() => router.push("/signup")} />
@@ -667,8 +654,8 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
       </section>
 
       {/* CTA */}
-      <section style={{ padding: "80px 24px", textAlign: "center", borderTop: "1px solid rgba(56, 189, 248, 0.06)" }}>
-        <h2 style={{ fontSize: 36, fontWeight: 800, letterSpacing: "-0.03em", margin: "0 0 16px" }}>
+      <section className="px-6 py-12 md:py-20 text-center" style={{ borderTop: "1px solid rgba(56, 189, 248, 0.06)" }}>
+        <h2 className="text-2xl md:text-4xl" style={{ fontWeight: 800, letterSpacing: "-0.03em", margin: "0 0 16px" }}>
           Stop paying Google.{" "}
           <span style={{
             background: "linear-gradient(135deg, #38bdf8, #22c55e)",

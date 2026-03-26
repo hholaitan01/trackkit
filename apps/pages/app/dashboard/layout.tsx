@@ -17,6 +17,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter();
   const pathname = usePathname();
   const [tenant, setTenant] = useState<any>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!hasApiKey()) {
@@ -29,6 +30,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     });
   }, [router]);
 
+  // Close menu on route change
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
   const logout = () => {
     clearApiKey();
     router.push("/login");
@@ -36,8 +42,37 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen flex">
+      {/* Mobile header */}
+      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-surface border-b border-white/5 px-4 py-3 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-brand to-sky-500 flex items-center justify-center text-xs font-black text-base">
+            T
+          </div>
+          <span className="text-sm font-extrabold tracking-tight">TrackKit</span>
+        </Link>
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="text-white/60 text-xl w-8 h-8 flex items-center justify-center"
+        >
+          {menuOpen ? "×" : "☰"}
+        </button>
+      </div>
+
+      {/* Mobile overlay */}
+      {menuOpen && (
+        <div
+          className="md:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+          onClick={() => setMenuOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-56 bg-surface border-r border-white/5 flex flex-col fixed inset-y-0">
+      <aside className={`
+        w-56 bg-surface border-r border-white/5 flex flex-col fixed inset-y-0 z-40
+        transition-transform duration-200
+        ${menuOpen ? "translate-x-0" : "-translate-x-full"}
+        md:translate-x-0
+      `}>
         <Link href="/" className="p-5 flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-sky-500 flex items-center justify-center text-xs font-black text-base">
             T
@@ -83,7 +118,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 ml-56 p-8">{children}</main>
+      <main className="flex-1 md:ml-56 p-4 pt-16 md:p-8 md:pt-8">{children}</main>
     </div>
   );
 }

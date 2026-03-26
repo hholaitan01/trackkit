@@ -23,7 +23,30 @@ export default function DriversPage() {
         </button>
       </div>
 
-      <div className="bg-surface rounded-xl border border-white/5 overflow-hidden">
+      {/* Mobile card view */}
+      <div className="md:hidden space-y-3">
+        {loading ? (
+          <div className="p-8 text-center text-white/20 text-sm">Loading...</div>
+        ) : drivers.length === 0 ? (
+          <div className="p-8 text-center text-white/20 text-sm">No drivers yet</div>
+        ) : (
+          drivers.map((d) => (
+            <div key={d.id} className="bg-surface rounded-xl border border-white/5 p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-medium text-sm">{d.name}</span>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${d.isOnline ? "bg-green-500/15 text-green-400" : "bg-white/5 text-white/30"}`}>
+                  {d.isOnline ? "Online" : "Offline"}
+                </span>
+              </div>
+              <div className="text-xs text-white/40">{d.phone || "No phone"}</div>
+              {d.lat && <div className="text-xs text-white/30 font-mono mt-1">{d.lat.toFixed(4)}, {d.lng.toFixed(4)}</div>}
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Desktop table view */}
+      <div className="hidden md:block bg-surface rounded-xl border border-white/5 overflow-hidden">
         <div className="grid grid-cols-[1fr_1fr_100px_120px_120px] px-5 py-3 text-[11px] font-semibold text-white/30 uppercase tracking-wide border-b border-white/5">
           <span>Name</span><span>Phone</span><span>Status</span><span>Location</span><span>External ID</span>
         </div>

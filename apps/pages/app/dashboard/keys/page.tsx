@@ -47,7 +47,33 @@ export default function KeysPage() {
         </div>
       )}
 
-      <div className="bg-surface rounded-xl border border-white/5 overflow-hidden">
+      {/* Mobile card view */}
+      <div className="md:hidden space-y-3">
+        {loading ? (
+          <div className="p-8 text-center text-white/20 text-sm">Loading...</div>
+        ) : keys.length === 0 ? (
+          <div className="p-8 text-center text-white/20 text-sm">No API keys</div>
+        ) : (
+          keys.map((k) => (
+            <div key={k.id} className="bg-surface rounded-xl border border-white/5 p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-medium text-sm">{k.name}</span>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${k.isLive ? "bg-green-500/15 text-green-400" : "bg-yellow-500/15 text-yellow-400"}`}>
+                  {k.isLive ? "Live" : "Test"}
+                </span>
+              </div>
+              <div className="font-mono text-xs text-white/30 break-all mb-2">{k.key.slice(0, 16)}...{k.key.slice(-4)}</div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-white/30">{k.lastUsed ? `Used ${new Date(k.lastUsed).toLocaleDateString()}` : "Never used"}</span>
+                <button onClick={() => deleteKey(k.id)} className="text-xs text-red-400/50 hover:text-red-400 transition">Revoke</button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Desktop table view */}
+      <div className="hidden md:block bg-surface rounded-xl border border-white/5 overflow-hidden">
         <div className="grid grid-cols-[1fr_1.5fr_80px_120px_80px] px-5 py-3 text-[11px] font-semibold text-white/30 uppercase tracking-wide border-b border-white/5">
           <span>Name</span><span>Key</span><span>Mode</span><span>Last Used</span><span></span>
         </div>
