@@ -472,7 +472,7 @@ function PricingCard({ tier, price, period, features, highlight, cta, onCta }) {
 }
 
 // ─── Signup Modal ───
-function SignupModal({ isOpen, onClose }) {
+function SignupModal({ isOpen, onClose, onSignupComplete }) {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -500,6 +500,7 @@ function SignupModal({ isOpen, onClose }) {
         setError(data.message || "Signup failed");
       } else {
         setResult(data);
+        onSignupComplete?.(data.keys.test.key);
       }
     } catch {
       setError("Network error. Please try again.");
@@ -642,7 +643,7 @@ function SignupModal({ isOpen, onClose }) {
             ))}
 
             <a
-              href="https://dashboard-nu-teal-99.vercel.app"
+              href={`https://dashboard-nu-teal-99.vercel.app?key=${encodeURIComponent(result.keys.test.key)}`}
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -686,6 +687,16 @@ export default function TrackKitLanding() {
   const [activeTab, setActiveTab] = useState("widget");
   const [showSignup, setShowSignup] = useState(false);
   const [page, setPage] = useState(window.location.pathname === "/docs" ? "docs" : "home");
+  const [loggedInKey, setLoggedInKey] = useState(() => localStorage.getItem("tk_api_key") || "");
+
+  const dashboardUrl = loggedInKey
+    ? `https://dashboard-nu-teal-99.vercel.app?key=${encodeURIComponent(loggedInKey)}`
+    : "https://dashboard-nu-teal-99.vercel.app";
+
+  const handleSignupComplete = (apiKey) => {
+    localStorage.setItem("tk_api_key", apiKey);
+    setLoggedInKey(apiKey);
+  };
 
   const navigate = (p) => {
     setPage(p);
@@ -808,15 +819,15 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
               onMouseLeave={e => e.target.style.color = "rgba(148, 163, 184, 0.6)"}
             >{l.label}</a>
           ))}
-          <a href="https://dashboard-nu-teal-99.vercel.app" target="_blank" rel="noopener noreferrer" style={{
+          <a href={dashboardUrl} target="_blank" rel="noopener noreferrer" style={{
             padding: "8px 18px", borderRadius: 8,
             border: "1px solid rgba(56, 189, 248, 0.25)",
-            background: "transparent",
+            background: loggedInKey ? "rgba(56, 189, 248, 0.1)" : "transparent",
             color: "#38bdf8",
             fontSize: 12, fontWeight: 700, cursor: "pointer",
             textDecoration: "none",
             marginRight: -8,
-          }}>Dashboard</a>
+          }}>{loggedInKey ? "Dashboard" : "Login"}</a>
           <a href="https://github.com/hholaitan01/trackkit" target="_blank" rel="noopener noreferrer" style={{
             padding: "8px 18px", borderRadius: 8,
             background: "linear-gradient(135deg, #38bdf8, #0ea5e9)",
@@ -1114,7 +1125,7 @@ console.<span style="color:#fbbf24">log</span>(delivery.trackingUrl)
         </button>
       </section>
 
-      <SignupModal isOpen={showSignup} onClose={() => setShowSignup(false)} />
+      <SignupModal isOpen={showSignup} onClose={() => setShowSignup(false)} onSignupComplete={handleSignupComplete} />
 
       {/* Footer */}
       <footer style={{

@@ -11,6 +11,16 @@ export default function LoginPage() {
   const router = useRouter();
 
   useEffect(() => {
+    // Accept ?key= param for seamless auth from landing page
+    const params = new URLSearchParams(window.location.search);
+    const urlKey = params.get("key");
+    if (urlKey && urlKey.startsWith("tk_")) {
+      setApiKey(urlKey);
+      // Clean the URL
+      window.history.replaceState({}, "", "/");
+      router.replace("/dashboard");
+      return;
+    }
     if (hasApiKey()) router.replace("/dashboard");
   }, [router]);
 
