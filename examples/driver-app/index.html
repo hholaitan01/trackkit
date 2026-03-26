@@ -266,7 +266,7 @@
       border: 1px solid rgba(56, 189, 248, 0.06);
       font-family: 'JetBrains Mono', monospace; font-size: 11px;
       line-height: 1.7; color: #94a3b8; overflow-x: auto;
-      white-space: pre;
+      white-space: pre; -webkit-overflow-scrolling: touch;
     }
     .code-block .kw { color: #c084fc; }
     .code-block .fn { color: #fbbf24; }
@@ -293,6 +293,60 @@
       background: rgba(56, 189, 248, 0.08);
     }
     .flow-arrow { color: rgba(56, 189, 248, 0.25); font-size: 14px; }
+
+    /* ─── Mobile ─── */
+    @media (max-width: 480px) {
+      .header { padding: 10px 12px; gap: 6px; }
+      .header-left { gap: 6px; }
+      .header-left span { font-size: 12px !important; }
+      .header-right { gap: 6px; }
+      .btn-ghost { padding: 5px 8px; font-size: 10px; }
+      .demo-badge, .live-badge { padding: 3px 7px; font-size: 9px; }
+      .logo-icon { width: 24px; height: 24px; font-size: 10px; border-radius: 6px; }
+
+      .hero { padding: 24px 16px 20px; }
+      .hero h1 { font-size: 18px; }
+      .hero p { font-size: 12px; }
+      .hero-actions { gap: 8px; }
+      .btn-primary, .btn-secondary { padding: 10px 16px; font-size: 12px; }
+
+      .content { padding: 12px 12px 80px; }
+      #map { height: 220px; }
+      .map-overlay { bottom: 8px; left: 8px; gap: 6px; }
+      .map-stat { padding: 5px 8px; font-size: 10px; }
+
+      .delivery-item { padding: 10px 12px; }
+      .delivery-code { font-size: 12px; }
+      .delivery-route { font-size: 10px; }
+
+      .status-btns { gap: 4px; }
+      .status-btn { padding: 6px 8px; font-size: 9px; }
+
+      .track-btn { padding: 14px; font-size: 14px; border-radius: 12px; }
+
+      .log-box { max-height: 150px; padding: 8px 10px; }
+      .log-entry { font-size: 9px; }
+
+      .code-block { font-size: 10px; padding: 10px 12px; line-height: 1.6; }
+      .code-comment { font-size: 10px; }
+      .code-panel { padding: 12px; }
+      .code-panel h3 { font-size: 10px; }
+
+      .flow { gap: 6px; }
+      .flow-step { padding: 6px 10px; font-size: 10px; }
+      .flow-arrow { font-size: 12px; }
+
+      .modal { padding: 24px 20px; }
+      .input { padding: 12px 14px; font-size: 13px; }
+    }
+
+    @media (max-width: 360px) {
+      .header-left span { display: none; }
+      #map { height: 180px; }
+      .flow-step { padding: 5px 8px; font-size: 9px; }
+      .status-btn { padding: 5px 6px; font-size: 8px; }
+      .code-block { font-size: 9px; }
+    }
 
     /* ─── Footer ─── */
     .footer {
